@@ -1,0 +1,177 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  background:
+    radial-gradient(1200px 600px at -10% -20%, rgba(34, 211, 238, 0.10), transparent 60%),
+    radial-gradient(900px 600px at 110% 10%, rgba(167, 139, 250, 0.10), transparent 55%),
+    #05070b;
+  color: #e6e9ef;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* The page (CV preview) ----------------------------------------------------- */
+
+.cv-page {
+  width: 794px;        /* A4 @ 96dpi */
+  min-height: 1123px;  /* A4 @ 96dpi */
+  background: #ffffff;
+  color: #0b0d12;
+  position: relative;
+  overflow: hidden;
+}
+
+@media print {
+  .cv-page {
+    box-shadow: none !important;
+    margin: 0 !important;
+  }
+}
+
+/* Custom scrollbars in the editor pane ------------------------------------- */
+
+.scroll-thin::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.scroll-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scroll-thin::-webkit-scrollbar-thumb {
+  background: #1e2230;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.scroll-thin::-webkit-scrollbar-thumb:hover {
+  background: #2a3142;
+  background-clip: padding-box;
+}
+
+/* Form controls ------------------------------------------------------------ */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field > label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #818ca0;
+}
+
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  background: #0b0d12;
+  border: 1px solid #1e2230;
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 13.5px;
+  color: #e6e9ef;
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease,
+    background 120ms ease;
+}
+
+.field textarea {
+  min-height: 80px;
+  resize: vertical;
+  font-family: "Inter", sans-serif;
+  line-height: 1.5;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  outline: none;
+  border-color: #22d3ee;
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15);
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: #4d566a;
+}
+
+/* Buttons ------------------------------------------------------------------ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease,
+    transform 60ms ease,
+    color 120ms ease;
+  cursor: pointer;
+  user-select: none;
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn-ghost {
+  background: transparent;
+  color: #aeb6c4;
+  border-color: #1e2230;
+}
+.btn-ghost:hover {
+  background: #11141c;
+  color: #e6e9ef;
+}
+.btn-primary {
+  background: linear-gradient(180deg, #22d3ee, #0891b2);
+  color: #04141a;
+  font-weight: 600;
+  border-color: rgba(34, 211, 238, 0.5);
+}
+.btn-primary:hover {
+  filter: brightness(1.06);
+}
+.btn-danger {
+  background: transparent;
+  color: #f87171;
+  border-color: #3a1f24;
+}
+.btn-danger:hover {
+  background: #1a0f12;
+}
+
+/* Generic chip / kbd ------------------------------------------------------- */
+
+.kbd {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #11141c;
+  border: 1px solid #1e2230;
+  color: #aeb6c4;
+}
+
