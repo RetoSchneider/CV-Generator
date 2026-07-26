@@ -9,20 +9,6 @@ no telemetry. Your data lives in `localStorage`.
 ~/cv/yourname.tsx ░ tailored for IT · gap-friendly · gamer-friendly
 ```
 
-## Why this exists
-
-The internet's full of generic AI CV builders that all look the same and
-fail on three things that matter for career-changers:
-
-1. **Honest about gaps** — every experience entry has a "career break"
-   toggle. Marks the entry visually distinct and adds a quiet `[break]`
-   tag, so you can own gap years instead of hiding them.
-2. **Bootcamp-respecting** — education isn't degree-shaped. Bootcamps,
-   self-study, and certifications are first-class.
-3. **Personality without cringe** — an optional, toggleable
-   "Beyond Work" section frames hobbies (gaming included) like an adult
-   talking to another adult.
-
 ## Getting started
 
 ```bash
@@ -83,19 +69,6 @@ src/
   types.ts
   App.tsx
 ```
-
-## Tips that beat generic CVs
-
-- **Lead with impact, not duties.** "Cut CI runtime 38→9 min" beats
-  "responsible for CI maintenance".
-- **One bullet, one number.** Recruiters skim. Numbers anchor eyes.
-- **Consolidate the pre-IT past.** One entry covering 6 years of retail
-  is fine. Don't list every shop.
-- **Own gaps in 1 line.** "Career reset · self-directed study (~6 mo)"
-  reads better than a hole.
-- **Gaming section: short, calm, specific.** "Raid lead, 25-person team,
-  weekly progression" > "I love gaming!!". Hide it (one toggle) if the
-  job sounds stuffy.
 
 ## Stack
 
