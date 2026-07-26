@@ -6,7 +6,7 @@ Live preview, two print-ready templates, export to **PDF** and **Word
 no telemetry. Your data lives in `localStorage`.
 
 ```
-~/cv/yourname.tsx ░ tailored for IT · gap-friendly · gamer-friendly
+~/cv/yourname.tsx
 ```
 
 ## Getting started
