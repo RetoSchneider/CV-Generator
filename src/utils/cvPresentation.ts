@@ -1,4 +1,4 @@
-import type { AccentTone, CV } from "../../types";
+import type { AccentTone } from "../types";
 
 export const ACCENT_HEX: Record<AccentTone, { base: string; deep: string; soft: string }> = {
   cyan: { base: "#0891b2", deep: "#155e75", soft: "#cffafe" },
@@ -26,10 +26,6 @@ export function dateRange(start: string, end: string) {
 
 export function cleanLink(url: string) {
   return url.replace(/^https?:\/\//, "").replace(/\/$/, "");
-}
-
-export function ensureSummary(cv: CV) {
-  return cv.summary?.trim() || "";
 }
 
 export function shapeToRadius(shape: "circle" | "square" | "rounded" | undefined) {

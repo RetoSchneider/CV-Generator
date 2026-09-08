@@ -18,8 +18,9 @@ interface State extends Partial<ConfirmRequest> {
 export const useConfirm = create<State>((set, get) => ({
   open: false,
   ask(req) {
+    get().resolver?.(false);
     return new Promise<boolean>((resolve) => {
-      set({ ...req, open: true, resolver: resolve });
+      set({ message: undefined, danger: false, ...req, open: true, resolver: resolve });
     });
   },
   resolve(ok) {

@@ -1,8 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useId, useRef } from "react";
 import { AlertTriangle } from "lucide-react";
 import { useConfirm } from "../../ui-state/useConfirm";
 
 export function ConfirmDialog() {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
+  const messageId = useId();
   const open = useConfirm((s) => s.open);
   const title = useConfirm((s) => s.title);
   const message = useConfirm((s) => s.message);
@@ -12,21 +15,27 @@ export function ConfirmDialog() {
   const resolve = useConfirm((s) => s.resolve);
 
   useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") resolve(false);
-      if (e.key === "Enter") resolve(true);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, resolve]);
+    const dialog = dialogRef.current;
+    if (!open || !dialog) return;
+    dialog.showModal();
+    return () => dialog.close();
+  }, [open]);
 
   if (!open) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 grid place-items-center bg-black/60 backdrop-blur-sm"
-      onClick={() => resolve(false)}
+    <dialog
+      ref={dialogRef}
+      aria-labelledby={titleId}
+      aria-describedby={message ? messageId : undefined}
+      className="m-auto p-0 bg-transparent text-inherit backdrop:bg-black/60 backdrop:backdrop-blur-sm"
+      onCancel={(event) => {
+        event.preventDefault();
+        resolve(false);
+      }}
+      onClick={(event) => {
+        if (event.target === event.currentTarget) resolve(false);
+      }}
     >
       <div
         className="w-full max-w-sm rounded-2xl border border-ink-800 bg-ink-950 shadow-2xl"
@@ -41,25 +50,24 @@ export function ConfirmDialog() {
             <AlertTriangle size={18} />
           </div>
           <div className="flex-1 leading-snug">
-            <div className="text-[14px] font-semibold text-white">{title}</div>
+            <div id={titleId} className="text-[14px] font-semibold text-white">{title}</div>
             {message && (
-              <div className="mt-1 text-[12.5px] text-ink-300 leading-[1.55]">{message}</div>
+              <div id={messageId} className="mt-1 text-[12.5px] text-ink-300 leading-[1.55]">{message}</div>
             )}
           </div>
         </div>
         <div className="flex justify-end gap-2 px-4 py-3 border-t border-ink-800 bg-ink-950/80 rounded-b-2xl">
-          <button onClick={() => resolve(false)} className="btn btn-ghost">
+          <button autoFocus onClick={() => resolve(false)} className="btn btn-ghost">
             {cancelLabel}
           </button>
           <button
             onClick={() => resolve(true)}
-            autoFocus
             className={`btn ${danger ? "btn-danger !bg-red-500/15 !border-red-500/40 !text-red-200 hover:!bg-red-500/25" : "btn-primary"}`}
           >
             {confirmLabel}
           </button>
         </div>
       </div>
-    </div>
+    </dialog>
   );
 }

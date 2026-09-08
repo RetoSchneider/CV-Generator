@@ -8,11 +8,11 @@ import {
   Sparkles,
 } from "lucide-react";
 import type { CV } from "../../types";
-import { ACCENT_HEX, cleanLink, dateRange, initials, shapeToRadius } from "./shared";
-import { useT } from "../../i18n";
+import { ACCENT_HEX, cleanLink, dateRange, initials, shapeToRadius } from "../../utils/cvPresentation";
+import { translate } from "../../i18n/translations";
 
 export function ModernPro({ cv }: { cv: CV }) {
-  const t = useT();
+  const t = (key: string) => translate(cv.meta.locale ?? "en", key);
   const accent = ACCENT_HEX[cv.meta.accent];
   const compact = cv.meta.density === "compact";
 
@@ -24,12 +24,7 @@ export function ModernPro({ cv }: { cv: CV }) {
       className="cv-page shadow-page mx-auto font-sans text-[12.5px] leading-[1.55]"
       style={{
         fontFeatureSettings: '"ss01","cv11"',
-        // The accent strip + dark sidebar + white main are all painted as the
-        // page's background itself (not overlay elements), so every band ALWAYS
-        // bleeds to the true edges of the page regardless of where the content
-        // ends. The PDF exporter samples its per-page background strip from
-        // any row of the canvas and it is guaranteed to carry these colors —
-        // no mid- or end-of-document white-out in the sidebar column.
+
         background: `linear-gradient(to right,
           ${accent.base} 0px, ${accent.base} 5px,
           #0b0d12 5px, #0b0d12 36%,
@@ -38,9 +33,9 @@ export function ModernPro({ cv }: { cv: CV }) {
     >
 
       <div className="relative flex min-h-[1123px]">
-        {/* SIDEBAR ---------------------------------------------------------- */}
+
         <aside className={`w-[36%] text-white ${sidebarPad}`}>
-          {/* avatar — photo if uploaded, otherwise monogram */}
+
           {cv.meta.showPhotoMonogram && (
             <div className="mb-4 flex flex-col items-start gap-1.5">
               {cv.personal.photo ? (
@@ -72,7 +67,6 @@ export function ModernPro({ cv }: { cv: CV }) {
             </div>
           )}
 
-          {/* Contact */}
           <section data-cv-block>
           <SidebarTitle accent={accent.base}>{t("cv.contact")}</SidebarTitle>
           <ul className="cv-contact space-y-2 text-[12px] leading-tight text-white/85">
@@ -115,7 +109,6 @@ export function ModernPro({ cv }: { cv: CV }) {
           </ul>
           </section>
 
-          {/* Skills */}
           {cv.skills.length > 0 && (
             <section className="mt-5" data-cv-block>
               <SidebarTitle accent={accent.base}>{t("cv.skills")}</SidebarTitle>
@@ -145,7 +138,6 @@ export function ModernPro({ cv }: { cv: CV }) {
             </section>
           )}
 
-          {/* Languages */}
           {cv.languages.length > 0 && (
             <section className="mt-5" data-cv-block>
               <SidebarTitle accent={accent.base}>{t("cv.languages")}</SidebarTitle>
@@ -170,7 +162,6 @@ export function ModernPro({ cv }: { cv: CV }) {
             </section>
           )}
 
-          {/* Interests */}
           {cv.interests.length > 0 && (
             <section className="mt-5" data-cv-block>
               <SidebarTitle accent={accent.base}>{t("cv.interests")}</SidebarTitle>
@@ -191,7 +182,6 @@ export function ModernPro({ cv }: { cv: CV }) {
             </section>
           )}
 
-          {/* Certifications */}
           {cv.certifications.length > 0 && (
             <section className="mt-5" data-cv-block>
               <SidebarTitle accent={accent.base}>{t("cv.certifications")}</SidebarTitle>
@@ -209,9 +199,8 @@ export function ModernPro({ cv }: { cv: CV }) {
           )}
         </aside>
 
-        {/* MAIN ------------------------------------------------------------ */}
         <main className={`flex-1 ${mainPad} text-ink-900 bg-white`}>
-          {/* Header */}
+
           <header className="mb-4" data-cv-block>
             <div
               className="font-mono text-[10.5px] uppercase tracking-[0.28em]"
@@ -233,14 +222,12 @@ export function ModernPro({ cv }: { cv: CV }) {
             </div>
           </header>
 
-          {/* Summary */}
           {cv.summary && (
             <Block accent={accent.base} title={t("cv.profile")} icon={<Sparkles size={13} />}>
               <p className="text-[12.5px] text-ink-700 leading-[1.6]">{cv.summary}</p>
             </Block>
           )}
 
-          {/* Experience */}
           {cv.experience.length > 0 && (
             <Block accent={accent.base} title={t("cv.experience")} mode="split">
               <ol className="relative space-y-3 border-l border-ink-200 pl-4">
@@ -316,7 +303,6 @@ export function ModernPro({ cv }: { cv: CV }) {
             </Block>
           )}
 
-          {/* Projects */}
           {cv.projects.length > 0 && (
             <Block accent={accent.base} title={t("cv.projects")} mode="split">
               <div className="space-y-3">
@@ -369,7 +355,6 @@ export function ModernPro({ cv }: { cv: CV }) {
             </Block>
           )}
 
-          {/* Education */}
           {cv.education.length > 0 && (
             <Block accent={accent.base} title={t("cv.education")} mode="split">
               <div className="space-y-2.5">
@@ -438,11 +423,7 @@ function Block({
   accent: string;
   icon?: React.ReactNode;
   children: React.ReactNode;
-  /**
-   * "atomic": the whole section is one un-splittable page-break unit (short
-   * sections). "split": only the heading is a unit; children carry their own
-   * `data-cv-block` so the section can break between them (long lists).
-   */
+
   mode?: "atomic" | "split";
 }) {
   return (

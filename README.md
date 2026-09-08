@@ -1,78 +1,52 @@
 # CV Generator
 
-A local-first CV builder for software engineers and software testers.
-Live preview, two print-ready templates, export to **PDF** and **Word
-(.docx)**. Everything runs in your browser — no upload, no account,
-no telemetry. Your data lives in `localStorage`.
+A browser-based CV editor with a live Modern Pro preview, English/German/French/Italian interface, local JSON backups, and PDF and Word exports.
 
-```
-~/cv/yourname.tsx
-```
+## Development
 
-## Getting started
+Use Node.js 22 or later.
 
-```bash
-npm install
+```sh
+npm ci
 npm run dev
+npm test
+npm run build
 ```
 
-Open `http://localhost:5173`. The app loads pre-filled with a sample
-tailored to a self-taught engineer with prior non-IT roles. Edit any
-field — the right pane updates live. Hit **PDF** or **Word** in the
-top bar to download.
+The development server uses port 5173. The production build is written to `dist/` and can be served with `npm run preview`.
 
-## The templates
+## Data and privacy
 
-| Template       | Vibe                                                                 | Best for                                  |
-| -------------- | -------------------------------------------------------------------- | ----------------------------------------- |
-| **Modern Pro** | Two-column with dark sidebar, accent bar, monogram avatar            | Most applications. The default.           |
-| **Dev Console**| IDE-flavored — file path tab, monospace markers, tag-styled stack    | Tech-leaning roles, dev portfolios        |
-| **Editorial**  | Single-column, generous whitespace, type-led                         | Conservative orgs, ATS-priority pipelines |
+CV content is kept in memory and saved to this origin's `localStorage`. There is no backend, account, or CV upload. Storage can be denied, fill up, or be cleared by the browser. A visible warning reports read and write failures; use **Save** to keep a JSON backup before closing the page.
 
-Pick an accent color (cyan, violet, emerald, amber, rose) and a density
-(comfortable / compact) in the **theme** panel.
+The page requests fonts from Google Fonts. System fonts provide a fallback. This is not a fully offline-installed application, and export modules must be available from the server or browser cache when first used.
 
-## Export pipeline
+**Save** downloads a versioned `.cvdata.json` file, including the photo. **Open** accepts version 1 files and legacy raw CV objects with a `personal` object. Missing fields receive defaults. Invalid structures, unsupported versions, malformed collection entries, and unsupported photo sources are rejected before replacing the current document. Files are limited to 10 MiB. Entry IDs are made unique within each collection. Existing content triggers an overwrite confirmation.
 
-- **PDF** — `html2canvas` rasterizes the live preview at 2× DPI, then
-  `jsPDF` slices it across A4 pages. Page breaks are **block-aware**:
-  every section heading and experience entry is tagged `data-cv-block`,
-  and the slicer only cuts *between* blocks, so nothing is ever split
-  mid-line. Works for any number of pages.
-- **DOCX** — built from scratch with the `docx` library, ATS-friendly
-  Calibri 11pt, accent-coloured section headers, proper bullets and
-  tab-stop alignment for dates. Use this where the form requires Word.
+Uploaded images are limited to 10 MiB, resized to a maximum edge of 900 pixels, and encoded as JPEG. Imported photos must be embedded PNG or JPEG data URLs.
 
-## Save / open your work
+## Exports
 
-- **Save** writes everything (including the photo) to a
-  `name.cvdata.json` file. **Open** loads it back. Use this to back up,
-  move between machines, or keep several tailored versions side by side.
-- The importer is tolerant — missing or slightly outdated fields are
-  filled from defaults rather than crashing, and an invalid file is
-  rejected with a friendly message instead of corrupting your data.
-- Loading a file warns before overwriting non-empty work.
+- **PDF:** `html2canvas` renders the preview at 2× scale. `jsPDF` composes A4 pages with independently paginated sidebar and main columns. The result contains images, not selectable text. Blocks normally stay together; a block taller than a page is compressed vertically. Very long documents are constrained by browser canvas and memory limits.
+- **Word:** `docx` builds a separate text-based document with headings, bullets, dates, and an optional photo. It does not reproduce the two-column preview. An undecodable photo fails the export visibly rather than silently disappearing. Compatibility with a particular applicant tracking system is not guaranteed.
 
-## Project layout
+Export libraries load on demand. A failed export restores the controls and shows an error, allowing a retry or JSON backup.
 
-```
-src/
-  components/
-    forms/         # editor pane (left)
-    templates/     # the three CV templates (right)
-    ui/            # Section, Field, BulletsEditor, etc.
-  data/sampleData.ts   # the pre-filled, gap-aware sample
-  utils/
-    exportPdf.ts
-    exportDocx.ts
-  store.ts         # Zustand + persist
-  types.ts
-  App.tsx
-```
+## Structure
 
-## Stack
+| Location | Responsibility |
+| --- | --- |
+| `src/types.ts` | CV model |
+| `src/data/normalizeCV.ts` | Runtime validation, defaults, and overwrite detection |
+| `src/data/storage.ts` | Browser storage adapter and failure status |
+| `src/store.ts` | Explicit document mutations and persistence integration |
+| `src/components/forms/` | One editor section per module |
+| `src/components/templates/ModernPro.tsx` | Preview rendered from an explicit CV prop |
+| `src/components/ui/` | Reusable controls and native confirmation dialog |
+| `src/ui-state/` | Confirmation lifecycle and export operation state |
+| `src/utils/` | File integration, document construction, pagination, and presentation formatting |
+| `tests/` | Regression tests using Node's test runner |
 
-React 18 · TypeScript · Vite · Tailwind · Zustand · jsPDF · html2canvas
-· docx · lucide-react.
+Tests use the existing TypeScript compiler through a small module loader. `npm run build` performs strict source type checking. Tests cover data validation, overwrite protection, storage failures, confirmation lifecycle, pagination, locale isolation, labels, store actions, and Word generation. Browser interaction and export-layout testing remain separate.
 
-Built to run cold in any browser. No backend.
+See [REVIEW.md](REVIEW.md) for the engineering assessment and remaining work.

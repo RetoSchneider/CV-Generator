@@ -3,8 +3,6 @@ import type { Locale } from "../i18n/translations";
 
 const id = () => Math.random().toString(36).slice(2, 10);
 
-/* ---- localised strings ----------------------------------------------- */
-
 interface SampleStrings {
   title: string;
   summary: string;
@@ -308,8 +306,6 @@ const STRINGS: Record<Locale, SampleStrings> = {
   },
 };
 
-/* ---- builder --------------------------------------------------------- */
-
 export function buildSampleCV(locale: Locale = "en"): CV {
   const s = STRINGS[locale];
 
@@ -484,6 +480,3 @@ export function buildSampleCV(locale: Locale = "en"): CV {
     },
   };
 }
-
-/** Default sample (English) — kept for compatibility with the old import. */
-export const sampleCV = buildSampleCV("en");

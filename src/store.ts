@@ -1,5 +1,7 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
+import { isRecord, normalizeCV } from "./data/normalizeCV";
+import { createBrowserStorage, useStorageStatus } from "./data/storage";
 import type {
   CV,
   Experience,
@@ -14,54 +16,47 @@ import type {
 import { buildSampleCV } from "./data/sampleData";
 import type { Locale } from "./i18n/translations";
 
-const id = () => Math.random().toString(36).slice(2, 10);
+const createId = () => crypto.randomUUID();
 
 interface State {
   cv: CV;
+  documentRevision: number;
   setCV: (cv: CV) => void;
   reset: () => void;
   resetToSample: (locale?: Locale) => void;
 
-  // Personal / summary / meta
   patchPersonal: (patch: Partial<CV["personal"]>) => void;
   setSummary: (s: string) => void;
   patchMeta: (patch: Partial<Meta>) => void;
   setLocale: (locale: Locale) => void;
 
-  // Experience
   addExperience: () => void;
-  updateExperience: (id: string, patch: Partial<Experience>) => void;
+  updateExperience: (id: string, patch: Partial<Omit<Experience, "id">>) => void;
   removeExperience: (id: string) => void;
   moveExperience: (id: string, dir: -1 | 1) => void;
 
-  // Education
   addEducation: () => void;
-  updateEducation: (id: string, patch: Partial<Education>) => void;
+  updateEducation: (id: string, patch: Partial<Omit<Education, "id">>) => void;
   removeEducation: (id: string) => void;
 
-  // Skills
   addSkillGroup: () => void;
-  updateSkillGroup: (id: string, patch: Partial<SkillGroup>) => void;
+  updateSkillGroup: (id: string, patch: Partial<Omit<SkillGroup, "id">>) => void;
   removeSkillGroup: (id: string) => void;
 
-  // Projects
   addProject: () => void;
-  updateProject: (id: string, patch: Partial<Project>) => void;
+  updateProject: (id: string, patch: Partial<Omit<Project, "id">>) => void;
   removeProject: (id: string) => void;
 
-  // Certifications
   addCertification: () => void;
-  updateCertification: (id: string, patch: Partial<Certification>) => void;
+  updateCertification: (id: string, patch: Partial<Omit<Certification, "id">>) => void;
   removeCertification: (id: string) => void;
 
-  // Languages
   addLanguage: () => void;
-  updateLanguage: (id: string, patch: Partial<Language>) => void;
+  updateLanguage: (id: string, patch: Partial<Omit<Language, "id">>) => void;
   removeLanguage: (id: string) => void;
 
-  // Interests
   addInterest: (label?: string) => void;
-  updateInterest: (id: string, patch: Partial<Interest>) => void;
+  updateInterest: (id: string, patch: Partial<Omit<Interest, "id">>) => void;
   removeInterest: (id: string) => void;
 }
 
@@ -97,12 +92,13 @@ export const useStore = create<State>()(
   persist(
     (set) => ({
       cv: buildSampleCV("en"),
+      documentRevision: 0,
 
-      setCV: (cv) => set({ cv }),
+      setCV: (cv) => set((state) => ({ cv, documentRevision: state.documentRevision + 1 })),
       reset: () =>
-        set((s) => ({ cv: blankCV(s.cv.meta.locale ?? "en") })),
+        set((s) => ({ cv: blankCV(s.cv.meta.locale ?? "en"), documentRevision: s.documentRevision + 1 })),
       resetToSample: (locale) =>
-        set((s) => ({ cv: buildSampleCV(locale ?? s.cv.meta.locale ?? "en") })),
+        set((s) => ({ cv: buildSampleCV(locale ?? s.cv.meta.locale ?? "en"), documentRevision: s.documentRevision + 1 })),
 
       patchPersonal: (patch) =>
         set((s) => ({ cv: { ...s.cv, personal: { ...s.cv.personal, ...patch } } })),
@@ -118,7 +114,7 @@ export const useStore = create<State>()(
             ...s.cv,
             experience: [
               {
-                id: id(),
+                id: createId(),
                 role: "",
                 company: "",
                 location: "",
@@ -144,12 +140,12 @@ export const useStore = create<State>()(
         })),
       moveExperience: (eid, dir) =>
         set((s) => {
-          const arr = [...s.cv.experience];
-          const i = arr.findIndex((e) => e.id === eid);
-          const j = i + dir;
-          if (i < 0 || j < 0 || j >= arr.length) return s;
-          [arr[i], arr[j]] = [arr[j], arr[i]];
-          return { cv: { ...s.cv, experience: arr } };
+          const experience = [...s.cv.experience];
+          const sourceIndex = experience.findIndex((entry) => entry.id === eid);
+          const destinationIndex = sourceIndex + dir;
+          if (sourceIndex < 0 || destinationIndex < 0 || destinationIndex >= experience.length) return s;
+          [experience[sourceIndex], experience[destinationIndex]] = [experience[destinationIndex], experience[sourceIndex]];
+          return { cv: { ...s.cv, experience } };
         }),
 
       addEducation: () =>
@@ -158,7 +154,7 @@ export const useStore = create<State>()(
             ...s.cv,
             education: [
               {
-                id: id(),
+                id: createId(),
                 credential: "",
                 institution: "",
                 location: "",
@@ -184,7 +180,7 @@ export const useStore = create<State>()(
         set((s) => ({
           cv: {
             ...s.cv,
-            skills: [...s.cv.skills, { id: id(), label: "New group", items: [] }],
+            skills: [...s.cv.skills, { id: createId(), label: "", items: [] }],
           },
         })),
       updateSkillGroup: (gid, patch) =>
@@ -202,7 +198,7 @@ export const useStore = create<State>()(
           cv: {
             ...s.cv,
             projects: [
-              { id: id(), name: "", tagline: "", link: "", stack: [], highlights: [""] },
+              { id: createId(), name: "", tagline: "", link: "", stack: [], highlights: [""] },
               ...s.cv.projects,
             ],
           },
@@ -222,7 +218,7 @@ export const useStore = create<State>()(
           cv: {
             ...s.cv,
             certifications: [
-              { id: id(), name: "", issuer: "", year: "", link: "" },
+              { id: createId(), name: "", issuer: "", year: "", link: "" },
               ...s.cv.certifications,
             ],
           },
@@ -245,7 +241,7 @@ export const useStore = create<State>()(
         set((s) => ({
           cv: {
             ...s.cv,
-            languages: [...s.cv.languages, { id: id(), name: "", level: "Intermediate" }],
+            languages: [...s.cv.languages, { id: createId(), name: "", level: "Intermediate" }],
           },
         })),
       updateLanguage: (lid, patch) =>
@@ -260,7 +256,7 @@ export const useStore = create<State>()(
 
       addInterest: (label = "") =>
         set((s) => ({
-          cv: { ...s.cv, interests: [...s.cv.interests, { id: id(), label }] },
+          cv: { ...s.cv, interests: [...s.cv.interests, { id: createId(), label }] },
         })),
       updateInterest: (iid, patch) =>
         set((s) => ({
@@ -274,7 +270,15 @@ export const useStore = create<State>()(
     }),
     {
       name: "cv-generator/v1",
+      storage: createJSONStorage(() => createBrowserStorage(() => localStorage)),
       partialize: (s) => ({ cv: s.cv }),
+      merge: (persisted, current) => {
+        if (!isRecord(persisted)) return current;
+        return { ...current, cv: normalizeCV(persisted.cv) };
+      },
+      onRehydrateStorage: () => (_state, error) => {
+        if (error) useStorageStatus.setState({ issue: "read" });
+      },
     }
   )
 );

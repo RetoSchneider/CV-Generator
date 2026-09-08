@@ -23,8 +23,8 @@ export function ExperienceForm() {
   const ask = useConfirm((s) => s.ask);
   const items = useStore((s) => s.cv.experience);
   const add = useStore((s) => s.addExperience);
-  const upd = useStore((s) => s.updateExperience);
-  const rm = useStore((s) => s.removeExperience);
+  const update = useStore((s) => s.updateExperience);
+  const remove = useStore((s) => s.removeExperience);
   const move = useStore((s) => s.moveExperience);
 
   const handleRemove = async (e: Experience) => {
@@ -39,7 +39,7 @@ export function ExperienceForm() {
       });
       if (!ok) return;
     }
-    rm(e.id);
+    remove(e.id);
   };
 
   return (
@@ -92,29 +92,29 @@ export function ExperienceForm() {
             <Input
               label={t("field.role")}
               value={e.role}
-              onChange={(ev) => upd(e.id, { role: ev.target.value })}
+              onChange={(ev) => update(e.id, { role: ev.target.value })}
             />
             <Input
               label={t("field.company")}
               value={e.company}
-              onChange={(ev) => upd(e.id, { company: ev.target.value })}
+              onChange={(ev) => update(e.id, { company: ev.target.value })}
             />
             <Input
               label={t("field.location")}
               value={e.location}
-              onChange={(ev) => upd(e.id, { location: ev.target.value })}
+              onChange={(ev) => update(e.id, { location: ev.target.value })}
             />
             <div className="grid grid-cols-2 gap-2">
               <Input
                 label={t("field.start")}
                 value={e.start}
-                onChange={(ev) => upd(e.id, { start: ev.target.value })}
+                onChange={(ev) => update(e.id, { start: ev.target.value })}
                 placeholder="2022-08"
               />
               <Input
                 label={t("field.end")}
                 value={e.end}
-                onChange={(ev) => upd(e.id, { end: ev.target.value })}
+                onChange={(ev) => update(e.id, { end: ev.target.value })}
                 placeholder={t("cv.present")}
               />
             </div>
@@ -123,7 +123,7 @@ export function ExperienceForm() {
           <TagsInput
             label={t("field.stack")}
             value={e.stack}
-            onChange={(stack) => upd(e.id, { stack })}
+            onChange={(stack) => update(e.id, { stack })}
             placeholder="TypeScript, React, Playwright"
           />
 
@@ -131,14 +131,14 @@ export function ExperienceForm() {
             label={t("field.highlights")}
             hint={t("field.highlights.hint")}
             value={e.highlights}
-            onChange={(highlights) => upd(e.id, { highlights })}
+            onChange={(highlights) => update(e.id, { highlights })}
           />
 
           <label className="flex items-center gap-2 text-[12px] text-ink-400 select-none">
             <input
               type="checkbox"
               checked={!!e.isBreak}
-              onChange={(ev) => upd(e.id, { isBreak: ev.target.checked })}
+              onChange={(ev) => update(e.id, { isBreak: ev.target.checked })}
               className="accent-amber-400"
             />
             {t("field.markBreak")}

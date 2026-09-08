@@ -18,18 +18,17 @@ import { useStore } from "./store";
 import { ModernPro } from "./components/templates/ModernPro";
 import { PersonalForm } from "./components/forms/PersonalForm";
 import { ExperienceForm } from "./components/forms/ExperienceForm";
-import {
-  CertificationsForm,
-  EducationForm,
-  InterestsForm,
-  LanguagesForm,
-  ProjectsForm,
-  SkillsForm,
-} from "./components/forms/OtherForms";
+import { EducationForm } from "./components/forms/EducationForm";
+import { SkillsForm } from "./components/forms/SkillsForm";
+import { ProjectsForm } from "./components/forms/ProjectsForm";
+import { CertificationsForm } from "./components/forms/CertificationsForm";
+import { LanguagesForm } from "./components/forms/LanguagesForm";
+import { InterestsForm } from "./components/forms/InterestsForm";
 import { MetaForm } from "./components/forms/MetaForm";
-import { exportPdf } from "./utils/exportPdf";
-import { exportDocx } from "./utils/exportDocx";
-import { exportData, importData, hasContent } from "./utils/dataFile";
+import { useExport } from "./ui-state/useExport";
+import { useStorageStatus } from "./data/storage";
+import { exportData, importData } from "./utils/dataFile";
+import { hasContent } from "./data/normalizeCV";
 import { ConfirmDialog } from "./components/ui/ConfirmDialog";
 import { LOCALES, useT } from "./i18n";
 import { useConfirm } from "./ui-state/useConfirm";
@@ -50,9 +49,14 @@ export default function App() {
   const currentLocale: Locale = cv.meta.locale ?? "en";
 
   const [zoom, setZoom] = useState(0.75);
-  const [busy, setBusy] = useState<null | "pdf" | "docx">(null);
+  const { format: busy, failed: exportFailed, download } = useExport();
+  const storageIssue = useStorageStatus((state) => state.issue);
+  const [saveFailed, setSaveFailed] = useState(false);
+  const openingFile = useRef(false);
   const previewRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => { document.documentElement.lang = currentLocale; }, [currentLocale]);
 
   useEffect(() => {
     const fit = () => {
@@ -70,29 +74,10 @@ export default function App() {
     .trim()
     .toLowerCase()
     .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9-_]/g, "");
+    .replace(/[^\p{L}\p{N}_-]/gu, "") || "cv";
 
-  // PDF is generated in-app (no browser print dialog) so there is never a
-  // URL/date/page-number header or footer, colors fill the whole sheet, and
-  // every page gets identical top & bottom margins.
-  const downloadPdf = async () => {
-    if (!previewRef.current) return;
-    setBusy("pdf");
-    try {
-      await exportPdf(previewRef.current, `${fileBase || "cv"}.pdf`);
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  const downloadDocx = async () => {
-    setBusy("docx");
-    try {
-      await exportDocx(cv, `${fileBase || "cv"}.docx`);
-    } finally {
-      setBusy(null);
-    }
-  };
+  const downloadPdf = () => download(cv, previewRef.current, fileBase, "pdf");
+  const downloadDocx = () => download(cv, previewRef.current, fileBase, "docx");
 
   const handleSample = async () => {
     const ok = await ask({
@@ -115,10 +100,26 @@ export default function App() {
     if (ok) reset();
   };
 
-  const handleSaveData = () => exportData(cv, fileBase || "cv");
+  const handleSaveData = () => {
+    setSaveFailed(false);
+    try {
+      exportData(cv, fileBase);
+    } catch {
+      setSaveFailed(true);
+    }
+  };
 
   const handleOpenFile = async (file: File | undefined) => {
-    if (!file) return;
+    if (!file || openingFile.current) return;
+    openingFile.current = true;
+    try {
+      await openFile(file);
+    } finally {
+      openingFile.current = false;
+    }
+  };
+
+  const openFile = async (file: File) => {
     let next;
     try {
       next = await importData(file);
@@ -131,7 +132,7 @@ export default function App() {
       });
       return;
     }
-    if (hasContent(cv)) {
+    if (hasContent(useStore.getState().cv)) {
       const ok = await ask({
         title: t("confirm.import.title"),
         message: t("confirm.import.message"),
@@ -146,7 +147,7 @@ export default function App() {
 
   return (
     <div className="h-full flex flex-col">
-      {/* Top bar -------------------------------------------------------- */}
+
       <header className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-ink-800 bg-ink-950/70 backdrop-blur">
         <div className="flex items-center gap-2.5">
           <div className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-cyan-400 to-violet-500 text-ink-950 font-bold">
@@ -163,7 +164,7 @@ export default function App() {
         </div>
 
         <div className="flex items-center gap-1.5">
-          {/* Language switcher (compact) */}
+
           <div className="flex items-center gap-0.5 rounded-lg border border-ink-800 bg-ink-950/60 p-0.5 mr-1">
             {LOCALES.map((l) => {
               const active = currentLocale === l.id;
@@ -240,7 +241,9 @@ export default function App() {
         </div>
       </header>
 
-      {/* Body ---------------------------------------------------------- */}
+      {storageIssue && <div role="alert" className="px-4 py-2 text-amber-200">{t(`storage.error.${storageIssue}`)}</div>}
+      {(exportFailed || saveFailed) && <div role="alert" className="px-4 py-2 text-red-300">{t("export.error")}</div>}
+
       <div className="flex-1 grid grid-cols-[480px_1fr] min-h-0">
         <aside className="border-r border-ink-800 bg-ink-950/40 overflow-y-auto scroll-thin px-3 py-3 space-y-3">
           <PaneHint />
@@ -268,7 +271,7 @@ export default function App() {
                 className="btn btn-ghost !py-1 !px-2"
                 onClick={() => setZoom((z) => Math.max(MIN_ZOOM, +(z - ZOOM_STEP).toFixed(2)))}
               >
-                <Minus size={13} />
+                <Minus aria-label={t("preview.zoomOut")} size={13} />
               </button>
               <div className="font-mono text-[11px] text-ink-300 w-12 text-center">
                 {Math.round(zoom * 100)}%
@@ -277,7 +280,7 @@ export default function App() {
                 className="btn btn-ghost !py-1 !px-2"
                 onClick={() => setZoom((z) => Math.min(MAX_ZOOM, +(z + ZOOM_STEP).toFixed(2)))}
               >
-                <Plus size={13} />
+                <Plus aria-label={t("preview.zoomIn")} size={13} />
               </button>
               <button
                 className="btn btn-ghost !py-1 !px-2"
@@ -324,7 +327,7 @@ export default function App() {
 
 function PaneHint() {
   const t = useT();
-  // Replace the placeholders {{pdf}} / {{word}} with styled chips.
+
   const body = t("hint.pane.body").split(/(\{\{pdf\}\}|\{\{word\}\})/g);
   return (
     <div className="rounded-xl border border-ink-800 bg-gradient-to-br from-cyan-500/5 to-violet-500/5 px-3 py-2.5 flex items-start gap-2.5">

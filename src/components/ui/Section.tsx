@@ -23,6 +23,7 @@ export function Section({
     <section className="rounded-xl border border-ink-800 bg-ink-900/40 backdrop-blur">
       <header className="flex items-center justify-between gap-2 px-3 py-2.5">
         <button
+          aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
           className="flex items-center gap-1.5 text-ink-100 hover:text-white"
         >

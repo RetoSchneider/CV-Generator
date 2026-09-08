@@ -9,52 +9,40 @@ import {
   TextRun,
   TabStopType,
 } from "docx";
-import { saveAs } from "file-saver";
+import saveAs from "file-saver";
 import type { CV } from "../types";
-import { ACCENT_HEX, cleanLink, dateRange } from "../components/templates/shared";
+import { ACCENT_HEX, cleanLink, dateRange } from "./cvPresentation";
 import { dataUrlToBytes, dataUrlSize } from "./photo";
 import { translate } from "../i18n/translations";
 
-/**
- * Generates a clean, ATS-friendly Word document.
- * The DOCX intentionally trades the on-screen visual flair for maximum
- * compatibility with applicant tracking systems and recruiter-side tooling.
- * The on-screen design lives in the PDF; the DOCX is the bullet-proof option.
- */
-export async function exportDocx(cv: CV, fileName = "cv.docx") {
+export async function buildDocx(cv: CV): Promise<Document> {
   const accent = ACCENT_HEX[cv.meta.accent].deep.replace("#", "");
   const loc = cv.meta.locale ?? "en";
   const t = (key: string, vars?: Record<string, string>) => translate(loc, key, vars);
 
   const children: Paragraph[] = [];
 
-  // Photo (optional) — sits above the name, right-aligned to keep the
-  // text block left-aligned and ATS-readable.
   if (cv.meta.showPhotoMonogram && cv.personal.photo) {
-    try {
-      const bytes = dataUrlToBytes(cv.personal.photo);
-      const { w, h } = await dataUrlSize(cv.personal.photo);
-      const targetW = 140;
-      const targetH = Math.round((targetW * h) / w);
-      const isPng = cv.personal.photo.startsWith("data:image/png");
-      children.push(
-        new Paragraph({
-          alignment: AlignmentType.RIGHT,
-          children: [
-            new ImageRun({
-              data: bytes,
-              transformation: { width: targetW, height: targetH },
-              type: isPng ? "png" : "jpg",
-            } as ConstructorParameters<typeof ImageRun>[0]),
-          ],
-        })
-      );
-    } catch {
-      // Silently skip photo if decoding fails — the rest of the CV still exports.
-    }
+    const bytes = dataUrlToBytes(cv.personal.photo);
+    const { w, h } = await dataUrlSize(cv.personal.photo);
+    const scale = 140 / Math.max(w, h);
+    const targetW = Math.max(1, Math.round(w * scale));
+    const targetH = Math.max(1, Math.round(h * scale));
+    const isPng = cv.personal.photo.startsWith("data:image/png");
+    children.push(
+      new Paragraph({
+        alignment: AlignmentType.RIGHT,
+        children: [
+          new ImageRun({
+            data: bytes,
+            transformation: { width: targetW, height: targetH },
+            type: isPng ? "png" : "jpg",
+          }),
+        ],
+      })
+    );
   }
 
-  // Name
   children.push(
     new Paragraph({
       alignment: AlignmentType.LEFT,
@@ -68,7 +56,6 @@ export async function exportDocx(cv: CV, fileName = "cv.docx") {
     })
   );
 
-  // Title
   if (cv.personal.title) {
     children.push(
       new Paragraph({
@@ -76,7 +63,7 @@ export async function exportDocx(cv: CV, fileName = "cv.docx") {
           new TextRun({
             text: cv.personal.title,
             color: accent,
-            size: 24, // 12pt
+            size: 24,
             bold: true,
           }),
         ],
@@ -84,7 +71,6 @@ export async function exportDocx(cv: CV, fileName = "cv.docx") {
     );
   }
 
-  // Contact line
   const contact = [
     cv.personal.location,
     cv.personal.email,
@@ -104,7 +90,6 @@ export async function exportDocx(cv: CV, fileName = "cv.docx") {
     );
   }
 
-  // Summary
   if (cv.summary) {
     sectionHeader(children, t("cv.profile"), accent);
     children.push(
@@ -115,11 +100,10 @@ export async function exportDocx(cv: CV, fileName = "cv.docx") {
     );
   }
 
-  // Experience
   if (cv.experience.length > 0) {
     sectionHeader(children, t("cv.experience"), accent);
     for (const e of cv.experience) {
-      // Role @ Company  ........... date
+
       children.push(
         new Paragraph({
           tabStops: [{ type: TabStopType.RIGHT, position: 9000 }],
@@ -183,7 +167,6 @@ export async function exportDocx(cv: CV, fileName = "cv.docx") {
     }
   }
 
-  // Skills
   if (cv.skills.length > 0) {
     sectionHeader(children, t("cv.skills"), accent);
     for (const g of cv.skills) {
@@ -199,7 +182,6 @@ export async function exportDocx(cv: CV, fileName = "cv.docx") {
     children.push(new Paragraph({ spacing: { after: 160 }, children: [] }));
   }
 
-  // Projects
   if (cv.projects.length > 0) {
     sectionHeader(children, t("cv.projects"), accent);
     for (const p of cv.projects) {
@@ -250,7 +232,6 @@ export async function exportDocx(cv: CV, fileName = "cv.docx") {
     }
   }
 
-  // Education
   if (cv.education.length > 0) {
     sectionHeader(children, t("cv.education"), accent);
     for (const e of cv.education) {
@@ -288,7 +269,6 @@ export async function exportDocx(cv: CV, fileName = "cv.docx") {
     }
   }
 
-  // Certifications
   if (cv.certifications.length > 0) {
     sectionHeader(children, t("cv.certifications"), accent);
     for (const c of cv.certifications) {
@@ -308,7 +288,6 @@ export async function exportDocx(cv: CV, fileName = "cv.docx") {
     children.push(new Paragraph({ spacing: { after: 140 }, children: [] }));
   }
 
-  // Languages
   if (cv.languages.length > 0) {
     sectionHeader(children, t("cv.languages"), accent);
     children.push(
@@ -331,7 +310,6 @@ export async function exportDocx(cv: CV, fileName = "cv.docx") {
     );
   }
 
-  // Interests
   if (cv.interests.length > 0) {
     sectionHeader(children, t("cv.interests"), accent);
     children.push(
@@ -373,8 +351,7 @@ export async function exportDocx(cv: CV, fileName = "cv.docx") {
     ],
   });
 
-  const blob = await Packer.toBlob(doc);
-  saveAs(blob, fileName);
+  return doc;
 }
 
 function sectionHeader(out: Paragraph[], title: string, color: string) {
@@ -396,4 +373,9 @@ function sectionHeader(out: Paragraph[], title: string, color: string) {
       ],
     })
   );
+}
+
+export async function exportDocx(cv: CV, fileName = "cv.docx") {
+  const document = await buildDocx(cv);
+  saveAs(await Packer.toBlob(document), fileName);
 }

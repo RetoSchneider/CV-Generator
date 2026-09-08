@@ -1,8 +1,8 @@
 import type { TextareaHTMLAttributes, InputHTMLAttributes, SelectHTMLAttributes, ReactNode } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { useT } from "../../i18n";
 
-interface Common {
+interface FieldLabelProps {
   label: string;
   hint?: string;
 }
@@ -11,11 +11,13 @@ export function Input({
   label,
   hint,
   ...rest
-}: Common & InputHTMLAttributes<HTMLInputElement>) {
+}: FieldLabelProps & InputHTMLAttributes<HTMLInputElement>) {
+  const generatedId = useId();
+  const id = rest.id ?? generatedId;
   return (
     <div className="field">
-      <label>{label}{hint && <span className="text-ink-500 normal-case font-normal tracking-normal ml-1">· {hint}</span>}</label>
-      <input {...rest} />
+      <label htmlFor={id}>{label}{hint && <span className="text-ink-500 normal-case font-normal tracking-normal ml-1">· {hint}</span>}</label>
+      <input {...rest} id={id} />
     </div>
   );
 }
@@ -24,11 +26,13 @@ export function Textarea({
   label,
   hint,
   ...rest
-}: Common & TextareaHTMLAttributes<HTMLTextAreaElement>) {
+}: FieldLabelProps & TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  const generatedId = useId();
+  const id = rest.id ?? generatedId;
   return (
     <div className="field">
-      <label>{label}{hint && <span className="text-ink-500 normal-case font-normal tracking-normal ml-1">· {hint}</span>}</label>
-      <textarea {...rest} />
+      <label htmlFor={id}>{label}{hint && <span className="text-ink-500 normal-case font-normal tracking-normal ml-1">· {hint}</span>}</label>
+      <textarea {...rest} id={id} />
     </div>
   );
 }
@@ -38,11 +42,13 @@ export function Select({
   hint,
   children,
   ...rest
-}: Common & SelectHTMLAttributes<HTMLSelectElement> & { children: ReactNode }) {
+}: FieldLabelProps & SelectHTMLAttributes<HTMLSelectElement> & { children: ReactNode }) {
+  const generatedId = useId();
+  const id = rest.id ?? generatedId;
   return (
     <div className="field">
-      <label>{label}{hint && <span className="text-ink-500 normal-case font-normal tracking-normal ml-1">· {hint}</span>}</label>
-      <select {...rest}>{children}</select>
+      <label htmlFor={id}>{label}{hint && <span className="text-ink-500 normal-case font-normal tracking-normal ml-1">· {hint}</span>}</label>
+      <select {...rest} id={id}>{children}</select>
     </div>
   );
 }
@@ -53,46 +59,34 @@ export function TagsInput({
   value,
   onChange,
   placeholder,
-}: Common & {
+}: FieldLabelProps & {
   value: string[];
   onChange: (next: string[]) => void;
   placeholder?: string;
 }) {
-  // Keep a raw text buffer so the user can freely type commas/spaces (e.g.
-  // "React, " mid-tag) without the parsed value collapsing them away. We only
-  // resync the buffer when the value changes from the outside (reset/import).
+
+  const id = useId();
   const [text, setText] = useState(value.join(", "));
   useEffect(() => {
-    const parsed = text
-      .split(",")
-      .map((v) => v.trim())
-      .filter(Boolean);
-    if (parsed.join("\u0000") !== value.join("\u0000")) {
-      setText(value.join(", "));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setText((current) => {
+      const parsed = parseTags(current);
+      return parsed.length === value.length && parsed.every((tag, index) => tag === value[index])
+        ? current
+        : value.join(", ");
+    });
   }, [value]);
 
   return (
     <div className="field">
-      <label>{label}{hint && <span className="text-ink-500 normal-case font-normal tracking-normal ml-1">· {hint}</span>}</label>
+      <label htmlFor={id}>{label}{hint && <span className="text-ink-500 normal-case font-normal tracking-normal ml-1">· {hint}</span>}</label>
       <input
+        id={id}
         value={text}
         onChange={(e) => {
           setText(e.target.value);
-          onChange(
-            e.target.value
-              .split(",")
-              .map((v) => v.trim())
-              .filter(Boolean)
-          );
+          onChange(parseTags(e.target.value));
         }}
-        onBlur={() =>
-          setText(
-            value
-              .join(", ")
-          )
-        }
+        onBlur={() => setText(value.join(", "))}
         placeholder={placeholder ?? "Comma, separated, list"}
       />
     </div>
@@ -105,12 +99,13 @@ export function BulletsEditor({
   value,
   onChange,
   placeholder,
-}: Common & {
+}: FieldLabelProps & {
   value: string[];
   onChange: (next: string[]) => void;
   placeholder?: string;
 }) {
   const t = useT();
+  const id = useId();
   const update = (i: number, v: string) => {
     const next = [...value];
     next[i] = v;
@@ -121,12 +116,14 @@ export function BulletsEditor({
 
   return (
     <div className="field">
-      <label>{label}{hint && <span className="text-ink-500 normal-case font-normal tracking-normal ml-1">· {hint}</span>}</label>
+      <label htmlFor={id}>{label}{hint && <span className="text-ink-500 normal-case font-normal tracking-normal ml-1">· {hint}</span>}</label>
       <div className="space-y-1.5">
         {value.map((v, i) => (
           <div key={i} className="flex gap-1.5">
             <span className="text-ink-500 select-none pt-2 font-mono text-xs">›</span>
             <textarea
+              id={i === 0 ? id : undefined}
+              aria-label={`${label} ${i + 1}`}
               value={v}
               onChange={(e) => update(i, e.target.value)}
               placeholder={placeholder}
@@ -148,4 +145,8 @@ export function BulletsEditor({
       </div>
     </div>
   );
+}
+
+function parseTags(text: string): string[] {
+  return text.split(",").map((tag) => tag.trim()).filter(Boolean);
 }

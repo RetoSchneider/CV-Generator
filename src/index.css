@@ -23,11 +23,9 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* The page (CV preview) ----------------------------------------------------- */
-
 .cv-page {
-  width: 794px;        /* A4 @ 96dpi */
-  min-height: 1123px;  /* A4 @ 96dpi */
+  width: 794px;
+  min-height: 1123px;
   background: #ffffff;
   color: #0b0d12;
   position: relative;
@@ -40,8 +38,6 @@ body {
     margin: 0 !important;
   }
 }
-
-/* Custom scrollbars in the editor pane ------------------------------------- */
 
 .scroll-thin::-webkit-scrollbar {
   width: 10px;
@@ -60,8 +56,6 @@ body {
   background: #2a3142;
   background-clip: padding-box;
 }
-
-/* Form controls ------------------------------------------------------------ */
 
 .field {
   display: flex;
@@ -113,8 +107,6 @@ body {
   color: #4d566a;
 }
 
-/* Buttons ------------------------------------------------------------------ */
-
 .btn {
   display: inline-flex;
   align-items: center;
@@ -162,8 +154,6 @@ body {
 .btn-danger:hover {
   background: #1a0f12;
 }
-
-/* Generic chip / kbd ------------------------------------------------------- */
 
 .kbd {
   font-family: "JetBrains Mono", monospace;

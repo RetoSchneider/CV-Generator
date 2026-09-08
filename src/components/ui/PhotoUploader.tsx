@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Camera, Trash2, Upload } from "lucide-react";
 import { fileToResizedDataUrl } from "../../utils/photo";
 import { useT } from "../../i18n";
@@ -6,24 +6,35 @@ import { useT } from "../../i18n";
 interface Props {
   value?: string;
   shape: "circle" | "square" | "rounded";
-  onChange: (dataUrl: string | undefined) => void;
+  onChange: (dataUrl: string | undefined) => void | Promise<void>;
   onShapeChange: (shape: "circle" | "square" | "rounded") => void;
 }
 
 export function PhotoUploader({ value, shape, onChange, onShapeChange }: Props) {
   const t = useT();
   const inputRef = useRef<HTMLInputElement>(null);
+  const requestId = useRef(0);
+  const processing = useRef(false);
+  const [busy, setBusy] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => () => { requestId.current++; }, []);
+
   const handleFile = async (file: File | undefined) => {
-    if (!file) return;
+    if (!file || processing.current) return;
+    const currentRequest = ++requestId.current;
+    processing.current = true;
+    setBusy(true);
     setError(null);
     try {
       const url = await fileToResizedDataUrl(file, 900);
-      onChange(url);
+      if (currentRequest === requestId.current) await onChange(url);
     } catch {
-      setError(t("photo.error.notImage"));
+      if (currentRequest === requestId.current) setError(t("photo.error.notImage"));
+    } finally {
+      processing.current = false;
+      if (currentRequest === requestId.current) setBusy(false);
     }
   };
 
@@ -37,7 +48,7 @@ export function PhotoUploader({ value, shape, onChange, onShapeChange }: Props) 
   ];
 
   return (
-    <div className="field">
+    <div className="field" aria-busy={busy}>
       <label>
         {t("photo.label")}
         <span className="text-ink-500 normal-case font-normal tracking-normal ml-1">
@@ -78,6 +89,7 @@ export function PhotoUploader({ value, shape, onChange, onShapeChange }: Props) 
         <div className="flex-1 space-y-2">
           <div className="flex flex-wrap gap-1.5">
             <button
+              disabled={busy}
               onClick={() => inputRef.current?.click()}
               className="btn btn-ghost !py-1 !px-2 text-[12px]"
             >
@@ -86,6 +98,7 @@ export function PhotoUploader({ value, shape, onChange, onShapeChange }: Props) 
             </button>
             {value && (
               <button
+                disabled={busy}
                 onClick={() => onChange(undefined)}
                 className="btn btn-danger !py-1 !px-2 text-[12px]"
               >

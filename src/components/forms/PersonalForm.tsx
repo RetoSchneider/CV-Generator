@@ -9,6 +9,7 @@ export function PersonalForm() {
   const t = useT();
   const ask = useConfirm((s) => s.ask);
   const cv = useStore((s) => s.cv);
+  const documentRevision = useStore((s) => s.documentRevision);
   const patchPersonal = useStore((s) => s.patchPersonal);
   const setSummary = useStore((s) => s.setSummary);
 
@@ -32,6 +33,7 @@ export function PersonalForm() {
     <>
       <Section title={t("sec.identity")}>
         <PhotoUploader
+          key={documentRevision}
           value={p.photo}
           shape={p.photoShape ?? "circle"}
           onChange={handlePhotoChange}

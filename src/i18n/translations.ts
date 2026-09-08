@@ -7,11 +7,16 @@ export const LOCALES: { id: Locale; label: string; flag: string; native: string 
   { id: "it", label: "IT", flag: "🇮🇹", native: "Italiano" },
 ];
 
-/* eslint-disable */
 type Dict = Record<string, string>;
 
 const en: Dict = {
-  // App chrome ---------------------------------------------------------
+  "export.error": "Export failed. Please try again or save a JSON backup.",
+  "storage.error.read": "Saved data could not be loaded. Save a JSON backup before reloading.",
+  "storage.error.write": "Changes are only in memory. Save a JSON backup before closing this page.",
+  "bar.tooltip.pdf": "Download an image-based PDF. Use Word when selectable text is required.",
+  "preview.zoomIn": "Zoom in",
+  "preview.zoomOut": "Zoom out",
+
   "app.title": "CV Generator",
   "app.tagline": "local · private · no upload",
   "bar.sample": "Sample",
@@ -26,7 +31,6 @@ const en: Dict = {
   "bar.tooltip.sample": "Replace current data with the sample template",
   "bar.tooltip.clear": "Wipe everything",
   "bar.tooltip.word": "Download Word document (.docx) — ATS-friendly",
-  "bar.tooltip.pdf": "Save as PDF — sharp, selectable, ATS-readable text (opens print dialog → choose 'Save as PDF')",
   "bar.tooltip.pdfImage": "Image PDF — shrinks to fit a hard 2-page limit (not selectable/ATS)",
   "bar.tooltip.save": "Save all data to a file you can re-open later",
   "bar.tooltip.open": "Load a previously saved data file",
@@ -40,7 +44,6 @@ const en: Dict = {
   "preview.actualSize": "Actual size",
   "preview.reset": "Reset zoom",
 
-  // Theme panel --------------------------------------------------------
   "theme.template": "Template",
   "theme.accent": "Accent",
   "theme.density": "Density",
@@ -56,7 +59,6 @@ const en: Dict = {
   "template.editorial.label": "Editorial",
   "template.editorial.sub": "Single column · serif-feel · classic",
 
-  // Form section titles ------------------------------------------------
   "sec.theme": "// theme",
   "sec.identity": "// identity",
   "sec.summary": "// summary",
@@ -71,7 +73,6 @@ const en: Dict = {
   "sec.gaming": "// gaming",
   "sec.gaming.hint": "own it — confidently, briefly",
 
-  // Form fields --------------------------------------------------------
   "field.fullName": "Full name",
   "field.title": "Title",
   "field.location": "Location",
@@ -111,7 +112,6 @@ const en: Dict = {
   "field.receipts.hint": "optional — concrete things, not bragging",
   "field.includeGamer": "Include the gaming section on the CV",
 
-  // Photo uploader -----------------------------------------------------
   "photo.label": "Profile photo",
   "photo.hint": "optional · resized to 900px · stored locally",
   "photo.replace": "Replace",
@@ -124,7 +124,6 @@ const en: Dict = {
   "photo.help": "Drop an image or click. Square crops look best — try a head-and-shoulders photo with a calm background.",
   "photo.error.notImage": "Not an image file",
 
-  // Buttons ------------------------------------------------------------
   "btn.add.entry": "entry",
   "btn.add.group": "group",
   "btn.add.lang": "lang",
@@ -135,14 +134,12 @@ const en: Dict = {
   "btn.delete": "Delete",
   "btn.cancel": "Cancel",
 
-  // Misc UI hints ------------------------------------------------------
   "hint.pane.title": "Edit any field — preview updates live.",
   "hint.pane.body": "Your data stays in this browser (localStorage). Export to {{pdf}} for the recruiter's eyes, {{word}} for ATS bots.",
   "hint.footer.title": "readme",
   "hint.footer.body": "Gap-friendly experience entries (mark professional breaks), language certificates, accent picker. Best practice: keep it to 1–2 pages and lead each bullet with the impact.",
   "hint.footer.note": "Both PDF and DOCX work offline.",
 
-  // CV section labels (these print on the CV itself) -------------------
   "cv.label": "Curriculum Vitae",
   "cv.profile": "Profile",
   "cv.experience": "Experience",
@@ -160,18 +157,15 @@ const en: Dict = {
   "cv.breakNote": "[ professional break ]",
   "cv.present": "Present",
 
-  // DevConsole "off-the-clock" comment header -------------------------
   "cv.console.offTheClock": "// off-the-clock",
   "cv.console.profileLine": "const profile = {",
 
-  // Language levels ----------------------------------------------------
   "level.Native": "Native",
   "level.Fluent": "Fluent",
   "level.Professional": "Professional",
   "level.Intermediate": "Intermediate",
   "level.Basic": "Basic",
 
-  // Confirm dialogs ----------------------------------------------------
   "confirm.title.default": "Are you sure?",
   "confirm.action.delete": "Delete",
   "confirm.action.remove": "Remove",
@@ -201,6 +195,12 @@ const en: Dict = {
 };
 
 const de: Dict = {
+  "export.error": "Export fehlgeschlagen. Versuche es erneut oder sichere eine JSON-Datei.",
+  "storage.error.read": "Gespeicherte Daten konnten nicht geladen werden. Sichere vor dem Neuladen eine JSON-Datei.",
+  "storage.error.write": "Änderungen sind nur im Arbeitsspeicher. Sichere vor dem Schliessen eine JSON-Datei.",
+  "bar.tooltip.pdf": "PDF als Bild herunterladen. Für markierbaren Text verwende Word.",
+  "preview.zoomIn": "Vergrössern",
+  "preview.zoomOut": "Verkleinern",
   "app.title": "Lebenslauf-Generator",
   "app.tagline": "lokal · privat · kein Upload",
   "bar.sample": "Beispiel",
@@ -215,7 +215,6 @@ const de: Dict = {
   "bar.tooltip.sample": "Aktuelle Daten durch Beispiel ersetzen",
   "bar.tooltip.clear": "Alles löschen",
   "bar.tooltip.word": "Word-Dokument (.docx) herunterladen — ATS-freundlich",
-  "bar.tooltip.pdf": "Als PDF speichern — scharfer, markierbarer, ATS-lesbarer Text (öffnet Druckdialog → „Als PDF speichern“ wählen)",
   "bar.tooltip.pdfImage": "Bild-PDF — skaliert auf maximal 2 Seiten (nicht markierbar/ATS)",
   "bar.tooltip.save": "Alle Daten in eine Datei sichern, die du später wieder öffnen kannst",
   "bar.tooltip.open": "Eine zuvor gesicherte Datendatei laden",
@@ -380,6 +379,12 @@ const de: Dict = {
 };
 
 const fr: Dict = {
+  "export.error": "Échec de l’export. Réessayez ou sauvegardez un fichier JSON.",
+  "storage.error.read": "Les données enregistrées n’ont pas pu être chargées. Sauvegardez un fichier JSON avant de recharger.",
+  "storage.error.write": "Les modifications sont uniquement en mémoire. Sauvegardez un fichier JSON avant de fermer cette page.",
+  "bar.tooltip.pdf": "Télécharger un PDF sous forme d’image. Utilisez Word pour du texte sélectionnable.",
+  "preview.zoomIn": "Agrandir",
+  "preview.zoomOut": "Réduire",
   "app.title": "Générateur de CV",
   "app.tagline": "local · privé · sans envoi",
   "bar.sample": "Exemple",
@@ -394,7 +399,6 @@ const fr: Dict = {
   "bar.tooltip.sample": "Remplacer les données par le modèle d'exemple",
   "bar.tooltip.clear": "Tout effacer",
   "bar.tooltip.word": "Télécharger un document Word (.docx) — compatible ATS",
-  "bar.tooltip.pdf": "Enregistrer en PDF — texte net, sélectionnable et lisible par les ATS (ouvre la boîte d'impression → choisir « Enregistrer en PDF »)",
   "bar.tooltip.pdfImage": "PDF image — réduit pour tenir sur 2 pages max (non sélectionnable/ATS)",
   "bar.tooltip.save": "Enregistrer toutes les données dans un fichier réutilisable",
   "bar.tooltip.open": "Charger un fichier de données enregistré",
@@ -559,6 +563,12 @@ const fr: Dict = {
 };
 
 const it: Dict = {
+  "export.error": "Esportazione non riuscita. Riprova o salva un file JSON.",
+  "storage.error.read": "Impossibile caricare i dati salvati. Salva un file JSON prima di ricaricare.",
+  "storage.error.write": "Le modifiche sono solo in memoria. Salva un file JSON prima di chiudere la pagina.",
+  "bar.tooltip.pdf": "Scarica un PDF come immagine. Usa Word per il testo selezionabile.",
+  "preview.zoomIn": "Ingrandisci",
+  "preview.zoomOut": "Riduci",
   "app.title": "Generatore di CV",
   "app.tagline": "locale · privato · nessun upload",
   "bar.sample": "Esempio",
@@ -573,7 +583,6 @@ const it: Dict = {
   "bar.tooltip.sample": "Sostituisci i dati attuali con il modello di esempio",
   "bar.tooltip.clear": "Cancella tutto",
   "bar.tooltip.word": "Scarica documento Word (.docx) — compatibile con gli ATS",
-  "bar.tooltip.pdf": "Salva come PDF — testo nitido, selezionabile e leggibile dagli ATS (apre la finestra di stampa → scegli « Salva come PDF »)",
   "bar.tooltip.pdfImage": "PDF immagine — ridotto per stare in max 2 pagine (non selezionabile/ATS)",
   "bar.tooltip.save": "Salva tutti i dati in un file riapribile in seguito",
   "bar.tooltip.open": "Carica un file di dati salvato in precedenza",
@@ -746,7 +755,7 @@ export function translate(locale: Locale, key: string, vars?: Record<string, str
   let v = dict[key] ?? TRANSLATIONS.en[key] ?? key;
   if (vars) {
     for (const [k, val] of Object.entries(vars)) {
-      v = v.replaceAll(`{{${k}}}`, val);
+      v = v.replaceAll(`{{${k}}}`, () => val);
     }
   }
   return v;
