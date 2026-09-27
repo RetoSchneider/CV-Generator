@@ -23,6 +23,7 @@ export function ModernPro({ cv }: { cv: CV }) {
     <div
       className="cv-page shadow-page mx-auto font-sans text-[12.5px] leading-[1.55]"
       style={{
+        ...{ "--cv-sidebar-color": "#0b0d12", "--cv-accent-color": accent.base },
         fontFeatureSettings: '"ss01","cv11"',
 
         background: `linear-gradient(to right,

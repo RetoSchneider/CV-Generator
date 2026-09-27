@@ -4,7 +4,7 @@ A browser-based CV editor with a live Modern Pro preview, English/German/French/
 
 ## Development
 
-Use Node.js 22 or later.
+Use Node.js 22.13 or later.
 
 ```sh
 npm ci
@@ -27,10 +27,10 @@ Uploaded images are limited to 10 MiB, resized to a maximum edge of 900 pixels, 
 
 ## Exports
 
-- **PDF:** `html2canvas` renders the preview at 2× scale. `jsPDF` composes A4 pages with independently paginated sidebar and main columns. The result contains images, not selectable text. Blocks normally stay together; a block taller than a page is compressed vertically. Very long documents are constrained by browser canvas and memory limits.
+- **PDF:** The browser prints an isolated copy of the preview with real, selectable text and vector icons. The sidebar and main column are independently paginated onto A4 sheets without changing the editor. Blocks normally stay together; oversized text sections continue at line boundaries on following pages. Choose **Save as PDF**, A4, 100% scale, and no headers or footers in the print dialog. Colours and backgrounds are requested through print CSS; browser print settings can override them. Chrome/Edge are recommended and Chromium is covered by the regression tests. Font availability is the same as in the preview. No document is uploaded. PDF text extraction is verified, but compatibility with every applicant tracking system is not guaranteed.
 - **Word:** `docx` builds a separate text-based document with headings, bullets, dates, and an optional photo. It does not reproduce the two-column preview. An undecodable photo fails the export visibly rather than silently disappearing. Compatibility with a particular applicant tracking system is not guaranteed.
 
-Export libraries load on demand. A failed export restores the controls and shows an error, allowing a retry or JSON backup.
+Export modules load on demand. Closing or cancelling the PDF print dialog restores the controls. A failed export restores the controls and shows an error, allowing a retry or JSON backup.
 
 ## Structure
 
@@ -47,6 +47,8 @@ Export libraries load on demand. A failed export restores the controls and shows
 | `src/utils/` | File integration, document construction, pagination, and presentation formatting |
 | `tests/` | Regression tests using Node's test runner |
 
-Tests use the existing TypeScript compiler through a small module loader. `npm run build` performs strict source type checking. Tests cover data validation, overwrite protection, storage failures, confirmation lifecycle, pagination, locale isolation, labels, store actions, and Word generation. Browser interaction and export-layout testing remain separate.
+Tests use the existing TypeScript compiler through a small module loader. `npm run build` performs strict source type checking. Tests cover data validation, overwrite protection, storage failures, confirmation lifecycle, pagination, locale isolation, labels, store actions, and Word generation.
+
+`npm run test:pdf` starts a temporary local Vite server and uses headless Chrome plus PDF.js to verify actual PDF text, Unicode, page counts, no missing or duplicated text across columns/pages, all four locales, both densities, oversized sections, preview isolation, and print lifecycle cleanup. Install Google Chrome, or set `CHROME_PATH` to a Chromium executable. The checks use generated sample data and do not read personal CV files. Visually compare generated PDFs with the preview when changing print styles.
 
 See [REVIEW.md](REVIEW.md) for the engineering assessment and remaining work.
