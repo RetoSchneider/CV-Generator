@@ -7,6 +7,7 @@ import { buildSampleCV } from "../src/data/sampleData.ts";
 import { createBrowserStorage, useStorageStatus } from "../src/data/storage.ts";
 import { useConfirm } from "../src/ui-state/useConfirm.ts";
 import { paginateColumn } from "../src/utils/paginateColumn.ts";
+import { contactHref } from "../src/utils/cvPresentation.ts";
 import { translate } from "../src/i18n/translations.ts";
 import { ModernPro } from "../src/components/templates/ModernPro.tsx";
 import { Input, Textarea, Select } from "../src/components/ui/Field.tsx";
@@ -15,6 +16,21 @@ import { buildDocx } from "../src/utils/exportDocx.ts";
 import { Packer } from "docx";
 import { useStore } from "../src/store.ts";
 import { createJSONStorage } from "zustand/middleware";
+
+test("contact links use absolute web URLs and email destinations", () => {
+  assert.equal(contactHref(" github.com/RetoSchneider "), "https://github.com/RetoSchneider");
+  assert.equal(contactHref("www.linkedin.com/in/retoschneider93"), "https://www.linkedin.com/in/retoschneider93");
+  assert.equal(contactHref("example.com/path?lang=de#contact"), "https://example.com/path?lang=de#contact");
+  assert.equal(contactHref("//example.com"), "https://example.com/");
+  assert.equal(contactHref("HTTP://example.com"), "http://example.com/");
+  assert.equal(contactHref(" reto+cv@example.com ", "email"), "mailto:reto%2Bcv@example.com");
+  assert.equal(contactHref("mailto:reto@example.com", "email"), "mailto:reto@example.com");
+  for (const value of ["", "/relative", "#section", "javascript:alert(1)", "file:///C:/test", "data:text/html,test", "https://", "bad host.com", "https://user:pass@example.com"]) {
+    assert.equal(contactHref(value), undefined, value);
+  }
+  assert.equal(contactHref("not-an-email", "email"), undefined);
+  assert.equal(contactHref("reto@example.com?bcc=other@example.com", "email"), undefined);
+});
 
 test("normalization rejects unrelated JSON and invalid nested records", () => {
   for (const input of [null, [], {}, { personal: null }, { personal: {}, experience: [null] }, { personal: {}, skills: {} }]) {

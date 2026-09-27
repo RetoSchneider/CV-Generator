@@ -8,7 +8,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import type { CV } from "../../types";
-import { ACCENT_HEX, cleanLink, dateRange, initials, shapeToRadius } from "../../utils/cvPresentation";
+import { ACCENT_HEX, cleanLink, contactHref, dateRange, initials, shapeToRadius } from "../../utils/cvPresentation";
 import { translate } from "../../i18n/translations";
 
 export function ModernPro({ cv }: { cv: CV }) {
@@ -80,7 +80,7 @@ export function ModernPro({ cv }: { cv: CV }) {
             {cv.personal.email && (
               <li className="flex items-center gap-2">
                 <Mail size={13} className="shrink-0 opacity-70" />
-                <span className="break-all">{cv.personal.email}</span>
+                <ContactLink value={cv.personal.email} kind="email" />
               </li>
             )}
             {cv.personal.phone && (
@@ -92,19 +92,19 @@ export function ModernPro({ cv }: { cv: CV }) {
             {cv.personal.website && (
               <li className="flex items-center gap-2">
                 <Globe size={13} className="shrink-0 opacity-70" />
-                <span className="break-all">{cleanLink(cv.personal.website)}</span>
+                <ContactLink value={cv.personal.website} />
               </li>
             )}
             {cv.personal.github && (
               <li className="flex items-center gap-2">
                 <Github size={13} className="shrink-0 opacity-70" />
-                <span className="break-all">{cleanLink(cv.personal.github)}</span>
+                <ContactLink value={cv.personal.github} />
               </li>
             )}
             {cv.personal.linkedin && (
               <li className="flex items-center gap-2">
                 <Linkedin size={13} className="shrink-0 opacity-70" />
-                <span className="break-all">{cleanLink(cv.personal.linkedin)}</span>
+                <ContactLink value={cv.personal.linkedin} />
               </li>
             )}
           </ul>
@@ -388,6 +388,14 @@ export function ModernPro({ cv }: { cv: CV }) {
       </div>
     </div>
   );
+}
+
+function ContactLink({ value, kind = "web" }: { value: string; kind?: "web" | "email" }) {
+  const href = contactHref(value, kind);
+  const label = kind === "email" ? value.trim().replace(/^mailto:/i, "") : cleanLink(value);
+  return href ? (
+    <a href={href} target={kind === "web" ? "_blank" : undefined} rel="noopener noreferrer" className="break-all text-inherit no-underline">{label}</a>
+  ) : <span className="break-all">{label}</span>;
 }
 
 function SidebarTitle({

@@ -25,7 +25,27 @@ export function dateRange(start: string, end: string) {
 }
 
 export function cleanLink(url: string) {
-  return url.replace(/^https?:\/\//, "").replace(/\/$/, "");
+  return url.trim().replace(/^https?:\/\//i, "").replace(/\/$/, "");
+}
+
+export function contactHref(value: string, kind: "web" | "email" = "web"): string | undefined {
+  const text = value.trim();
+  if (kind === "email") {
+    const email = text.replace(/^mailto:/i, "");
+    if (!/^[^\s@?#]+@[^\s@?#]+\.[^\s@?#]+$/.test(email)) return undefined;
+    return `mailto:${encodeURIComponent(email).replace(/%40/g, "@")}`;
+  }
+  if (!text || /\s/.test(text) || /^[#?]/.test(text)) return undefined;
+  const candidate = text.startsWith("//") ? `https:${text}`
+    : /^[a-z][a-z\d+.-]*:/i.test(text) ? text : `https://${text}`;
+  if (text.startsWith("/") && !text.startsWith("//")) return undefined;
+  try {
+    const url = new URL(candidate);
+    if (!["https:", "http:"].includes(url.protocol) || !url.hostname || url.username || url.password) return undefined;
+    return url.href;
+  } catch {
+    return undefined;
+  }
 }
 
 export function shapeToRadius(shape: "circle" | "square" | "rounded" | undefined) {

@@ -65,8 +65,12 @@ try {
     const pdf = await loadingTask.promise;
     assert.equal(pdf.numPages, prepared.count, `${fixture}: no extra or missing pages`);
     let allText = '';
+    const linkTargets = [];
     for (let i=1; i<=pdf.numPages; i++) {
       const pdfPage = await pdf.getPage(i);
+      const links = (await pdfPage.getAnnotations()).filter(annotation => annotation.subtype === 'Link');
+      linkTargets.push(...links.map(link => link.url ?? link.unsafeUrl));
+      if (i > 1) assert.equal(links.length, 0, `${fixture}: hidden contact copies must not create links on later pages`);
       const content = await pdfPage.getTextContent();
       assert(content.items.length > 0, `${fixture}: page ${i} contains real text`);
       allText += content.items.map(item => item.str ?? '').join(' ');
@@ -90,6 +94,11 @@ try {
       }
     }
     const normalized = allText.replace(/\s/g, '');
+    const expectedLinks = fixture === 'minimal' ? [] : [
+      'mailto:you@domain.dev', 'https://yourname.dev/',
+      'https://github.com/yourname', 'https://linkedin.com/in/yourname',
+    ];
+    assert.deepEqual([...new Set(linkTargets)].sort(), expectedLinks.sort(), `${fixture}: PDF links have explicit external destinations`);
     for (const marker of prepared.markers) {
       assert.equal(normalized.toLowerCase().split(marker.toLowerCase()).length - 1, 1, `${fixture}: ${marker} must appear exactly once`);
     }
