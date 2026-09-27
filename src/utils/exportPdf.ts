@@ -26,7 +26,7 @@ export async function exportPdf(node: HTMLElement, fileName = "cv.pdf") {
   fix.textContent =
     `#cv-pdf-export-holder .cv-chip-label{display:inline-block;transform:translateY(-5px);}` +
 
-    `#cv-pdf-export-holder .cv-contact svg{transform:translateY(2px);}` +
+    `#cv-pdf-export-holder .cv-contact-icon{display:flex;flex-shrink:0;transform:translateY(2px);}` +
 
     `#cv-pdf-export-holder .cv-title-label{transform:translateY(-6.5px);}`;
   holder.appendChild(fix);
@@ -42,6 +42,13 @@ export async function exportPdf(node: HTMLElement, fileName = "cv.pdf") {
     page.style.width = `${width}px`;
 
     alignCanvasText(holder);
+
+    holder.querySelectorAll<SVGSVGElement>(".cv-contact svg").forEach((icon) => {
+      const wrapper = document.createElement("span");
+      wrapper.className = "cv-contact-icon";
+      icon.replaceWith(wrapper);
+      wrapper.appendChild(icon);
+    });
 
     await new Promise((r) => requestAnimationFrame(() => r(null)));
 
