@@ -24,7 +24,7 @@ test("switching the language translates the editor and the CV", async ({ page })
 
   await expect(page.locator("html")).toHaveAttribute("lang", "de");
   await expect(page.getByLabel("Vollständiger Name")).toBeVisible();
-  await expect(page.locator(".cv-page")).toContainText("Kontakt");
+  await expect(page.locator(".cv-page")).toContainText("Berufserfahrung");
 });
 
 test("an uploaded photo is embedded in the CV and removed only after confirmation", async ({ page }) => {
