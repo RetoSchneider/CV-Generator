@@ -91,7 +91,7 @@ const blankCV = (locale: Locale = "en"): CV => ({
 export const useStore = create<State>()(
   persist(
     (set) => ({
-      cv: blankCV("en"),
+      cv: buildSampleCV("en"),
       documentRevision: 0,
 
       setCV: (cv) => set((state) => ({ cv, documentRevision: state.documentRevision + 1 })),
