@@ -1,54 +1,82 @@
 # CV Generator
 
-A browser-based CV editor with a live Modern Pro preview, English/German/French/Italian interface, local JSON backups, and PDF and Word exports.
+[![CI](https://github.com/RetoSchneider/CV-Generator/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/RetoSchneider/CV-Generator/actions/workflows/ci.yml)
 
-## Development
+A browser-based CV editor with a live preview, PDF and Word export, and an English, German, French and Italian interface. Everything runs in the browser. There is no backend and no upload.
 
-Use Node.js 22.13 or later.
+**[Try it live](https://retoschneider.github.io/CV-Generator/)**
+
+![CV Generator editor with live preview](docs/screenshot.png)
+
+## Features
+
+- Live preview while you type
+- PDF export through the browser's print dialog, with selectable text and A4 pages where the sidebar and main column break independently
+- Word (.docx) export as a simple text document for applicant tracking systems
+- Save and open your CV as a `.cvdata.json` file, with validation before anything is replaced
+- Photo upload, resized to 900 px and stored as JPEG
+
+## Run locally
+
+Requires Node.js 22.13 or later.
 
 ```sh
 npm ci
 npm run dev
-npm test
-npm run build
 ```
 
-The development server uses port 5173. The production build is written to `dist/` and can be served with `npm run preview`.
+The app runs at http://localhost:5173.
+
+## Tests
+
+| Layer    | Location                 | Tool                           | What it checks                                                                                                                                       |
+| -------- | ------------------------ | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Unit     | `tests/unit`             | Vitest                         | File and storage validation, ID repair, photo restrictions, overwrite detection, store actions, pagination, Word output in all four languages        |
+| UI flows | `tests/e2e`              | Playwright Test (Chromium)     | Editing and reload, language switch, photo upload and removal, save/open round trip, invalid files, keyboard-safe dialogs, blocked storage, failed exports |
+| PDF      | `scripts/verify-pdf.mjs` | Playwright, PDF.js, Chrome     | The real PDF: selectable text, every text block exactly once across pages, Unicode, page count, links, and print dialog cleanup                      |
+
+```sh
+npm run typecheck
+npm test
+npx playwright install chromium
+npm run test:e2e
+npm run test:pdf
+```
+
+`test:e2e` builds the production bundle and serves it before the tests run. `test:report` opens the HTML report. `test:pdf` needs Google Chrome, or `CHROME_PATH` pointing to a Chromium executable, and uses generated sample data only.
+
+CI runs all of the above on every pull request and push to `master`, and deploys the app to GitHub Pages from `master`.
 
 ## Data and privacy
 
-CV content is kept in memory and saved to this origin's `localStorage`. There is no backend, account, or CV upload. Storage can be denied, fill up, or be cleared by the browser. A visible warning reports read and write failures; use **Save** to keep a JSON backup before closing the page.
+- Your CV is kept in this browser's `localStorage`. Nothing is sent to a server.
+- **Save** downloads a `.cvdata.json` file including the photo. **Open** rejects files that are not CV data, unsupported versions, files over 10 MiB and photos that are not embedded PNG or JPEG.
+- If the browser blocks storage, a warning appears and you can keep editing and save a backup file.
 
-The page requests fonts from Google Fonts. System fonts provide a fallback. This is not a fully offline-installed application, and export modules must be available from the server or browser cache when first used.
+## Known limitations
 
-**Save** downloads a versioned `.cvdata.json` file, including the photo. **Open** accepts version 1 files and legacy raw CV objects with a `personal` object. Missing fields receive defaults. Invalid structures, unsupported versions, malformed collection entries, and unsupported photo sources are rejected before replacing the current document. Files are limited to 10 MiB. Entry IDs are made unique within each collection. Existing content triggers an overwrite confirmation.
+- Clearing the browser's site data deletes the CV. Use **Save** to keep a backup.
+- There is one CV template. The Word export does not copy the two-column layout.
+- PDF export uses the browser's print dialog and works best in Chrome or Edge. Choose A4, 100 % scale and no headers or footers.
+- The editor is built for desktop screens.
+- Fonts load from Google Fonts. Without a connection the app falls back to system fonts.
+- UI tests run in Chromium only.
 
-Uploaded images are limited to 10 MiB, resized to a maximum edge of 900 pixels, and encoded as JPEG. Imported photos must be embedded PNG or JPEG data URLs.
+## Project structure
 
-## Exports
+| Location                                 | Responsibility                                       |
+| ---------------------------------------- | ---------------------------------------------------- |
+| `src/types.ts`                           | CV model                                             |
+| `src/data/`                              | Validation, defaults, sample data, browser storage   |
+| `src/store.ts`                           | Document state and persistence                       |
+| `src/components/forms/`                  | One editor section per file                          |
+| `src/components/templates/ModernPro.tsx` | CV preview                                           |
+| `src/utils/`                             | Data files, PDF and Word export, pagination          |
 
-- **PDF:** The browser prints an isolated copy of the preview with real, selectable text and vector icons. The sidebar and main column are independently paginated onto A4 sheets without changing the editor. Blocks normally stay together; oversized text sections continue at line boundaries on following pages. Choose **Save as PDF**, A4, 100% scale, and no headers or footers in the print dialog. Colours and backgrounds are requested through print CSS; browser print settings can override them. Chrome/Edge are recommended and Chromium is covered by the regression tests. Font availability is the same as in the preview. No document is uploaded. PDF text extraction is verified, but compatibility with every applicant tracking system is not guaranteed.
-- **Word:** `docx` builds a separate text-based document with headings, bullets, dates, and an optional photo. It does not reproduce the two-column preview. An undecodable photo fails the export visibly rather than silently disappearing. Compatibility with a particular applicant tracking system is not guaranteed.
+## How it was built
 
-Export modules load on demand. Closing or cancelling the PDF print dialog restores the controls. A failed export restores the controls and shows an error, allowing a retry or JSON backup.
+I built this project with the help of AI coding assistants. I set the scope and the test approach, and reviewed the changes.
 
-## Structure
+## License
 
-| Location | Responsibility |
-| --- | --- |
-| `src/types.ts` | CV model |
-| `src/data/normalizeCV.ts` | Runtime validation, defaults, and overwrite detection |
-| `src/data/storage.ts` | Browser storage adapter and failure status |
-| `src/store.ts` | Explicit document mutations and persistence integration |
-| `src/components/forms/` | One editor section per module |
-| `src/components/templates/ModernPro.tsx` | Preview rendered from an explicit CV prop |
-| `src/components/ui/` | Reusable controls and native confirmation dialog |
-| `src/ui-state/` | Confirmation lifecycle and export operation state |
-| `src/utils/` | File integration, document construction, pagination, and presentation formatting |
-| `tests/` | Regression tests using Node's test runner |
-
-Tests use the existing TypeScript compiler through a small module loader. `npm run build` performs strict source type checking. Tests cover data validation, overwrite protection, storage failures, confirmation lifecycle, pagination, locale isolation, labels, store actions, and Word generation.
-
-`npm run test:pdf` starts a temporary local Vite server and uses headless Chrome plus PDF.js to verify actual PDF text, Unicode, page counts, no missing or duplicated text across columns/pages, all four locales, both densities, oversized sections, preview isolation, and print lifecycle cleanup. Install Google Chrome, or set `CHROME_PATH` to a Chromium executable. The checks use generated sample data and do not read personal CV files. Visually compare generated PDFs with the preview when changing print styles.
-
-See [REVIEW.md](REVIEW.md) for the engineering assessment and remaining work.
+[MIT](LICENSE)
