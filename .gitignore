@@ -9,3 +9,5 @@ dist-ssr
 *.log
 tsconfig.tsbuildinfo
 tmp_*
+playwright-report
+test-results

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { chromium } from 'playwright';
+import { chromium } from '@playwright/test';
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
 import { createServer } from 'vite';
 

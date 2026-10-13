@@ -435,10 +435,10 @@ export function buildSampleCV(locale: Locale = "en"): CV {
         name: "cv-forge",
         tagline: "Local-first CV generator with PDF + DOCX export.",
         link: "github.com/yourname/cv-forge",
-        stack: ["React", "TypeScript", "Tailwind", "jsPDF", "docx"],
+        stack: ["React", "TypeScript", "Tailwind", "Zustand", "docx"],
         highlights: [
-          "Three print-ready templates, live preview, no backend — runs entirely in the browser.",
-          "Custom DOCX renderer that mirrors the on-screen layout for ATS-friendly Word output.",
+          "Live preview and no backend — runs entirely in the browser.",
+          "PDF export with selectable text plus a text-based Word export for applicant tracking systems.",
         ],
       },
       {
