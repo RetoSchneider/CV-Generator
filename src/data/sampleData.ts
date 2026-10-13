@@ -4,6 +4,7 @@ import type { Locale } from "../i18n/translations";
 const id = () => Math.random().toString(36).slice(2, 10);
 
 interface SampleStrings {
+  fullName: string;
   title: string;
   summary: string;
   currentCompany: string;
@@ -59,6 +60,7 @@ interface SampleStrings {
 
 const STRINGS: Record<Locale, SampleStrings> = {
   en: {
+    fullName: "Your Name",
     title: "Software Engineer · QA / Test Automation",
     summary:
       "Self-taught software engineer with 4+ years of production experience after a full-stack bootcamp. I ship pragmatic features end-to-end and treat quality as a first-class concern — I write the tests I wish my past self had written. Comfortable across the stack, sharper on the test-automation and reliability side. Career-changer; the years before IT taught me to communicate with humans, not just compilers.",
@@ -120,6 +122,7 @@ const STRINGS: Record<Locale, SampleStrings> = {
   },
 
   de: {
+    fullName: "Dein Name",
     title: "Software Engineer · QA / Test-Automation",
     summary:
       "Quereinsteiger mit 4+ Jahren Produktionserfahrung nach einem Full-Stack-Bootcamp — ohne Studium, dafür mit Portfolio. Ich liefere Features pragmatisch von Anfang bis Ende und behandle Qualität als First-Class-Thema; ich schreibe die Tests, die ich mir früher gewünscht hätte. Bin im ganzen Stack zu Hause, am stärksten im Bereich Testautomatisierung und Reliability. Die Jahre vor der IT haben mich gelehrt, mit Menschen zu sprechen, nicht nur mit Compilern.",
@@ -182,6 +185,7 @@ const STRINGS: Record<Locale, SampleStrings> = {
   },
 
   fr: {
+    fullName: "Votre Nom",
     title: "Software Engineer · QA / Automatisation des tests",
     summary:
       "Ingénieur logiciel autodidacte avec 4+ ans d'expérience en production après un bootcamp full-stack. Je livre des fonctionnalités de bout en bout, pragmatiquement, et je traite la qualité comme un sujet de premier plan — j'écris les tests que mon moi passé aurait aimé avoir. À l'aise sur tout le stack, plus pointu en automatisation des tests et fiabilité. Reconverti ; les années pré-IT m'ont appris à parler aux humains, pas seulement aux compilateurs.",
@@ -244,6 +248,7 @@ const STRINGS: Record<Locale, SampleStrings> = {
   },
 
   it: {
+    fullName: "Il Tuo Nome",
     title: "Software Engineer · QA / Test Automation",
     summary:
       "Ingegnere software autodidatta con 4+ anni di esperienza in produzione dopo un bootcamp full-stack. Rilascio feature pragmatiche end-to-end e tratto la qualità come tema di prima fascia — scrivo i test che il mio io passato avrebbe voluto avere. Mi muovo su tutto lo stack, più a fondo su test automation e reliability. Ho cambiato carriera; gli anni pre-IT mi hanno insegnato a parlare con le persone, non solo con i compilatori.",
@@ -311,7 +316,7 @@ export function buildSampleCV(locale: Locale = "en"): CV {
 
   return {
     personal: {
-      fullName: "Your Name",
+      fullName: s.fullName,
       title: s.title,
       location: "City, Country",
       email: "you@domain.dev",
