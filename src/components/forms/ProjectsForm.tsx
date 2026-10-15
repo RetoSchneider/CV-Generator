@@ -1,6 +1,6 @@
 import { Trash2 } from "lucide-react";
 import { useStore } from "../../store";
-import { Section } from "../ui/Section";
+import { LayoutSection } from "./LayoutSection";
 import { useT } from "../../i18n";
 import { Input, TagsInput, BulletsEditor } from "../ui/Field";
 import { useConfirm } from "../../ui-state/useConfirm";
@@ -39,7 +39,7 @@ export function ProjectsForm() {
   };
 
   return (
-    <Section title={t("sec.projects")} onAdd={add} addLabel={t("btn.add.entry")}>
+    <LayoutSection sectionKey="projects" title={t("sec.projects")} onAdd={add} addLabel={t("btn.add.entry")}>
       {items.map((p) => (
         <div key={p.id} className="rounded-lg border border-ink-800 bg-ink-950/40 p-3 space-y-2">
           <div className="flex items-center justify-end">
@@ -61,7 +61,7 @@ export function ProjectsForm() {
               label={t("field.link")}
               value={p.link ?? ""}
               onChange={(e) => update(p.id, { link: e.target.value })}
-              placeholder="github.com/yourname/project"
+              placeholder={t("placeholder.projectLink")}
             />
           </div>
           <Input
@@ -81,6 +81,6 @@ export function ProjectsForm() {
           />
         </div>
       ))}
-    </Section>
+    </LayoutSection>
   );
 }

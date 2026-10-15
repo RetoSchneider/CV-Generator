@@ -1,6 +1,6 @@
 import { Trash2 } from "lucide-react";
 import { useStore } from "../../store";
-import { Section } from "../ui/Section";
+import { LayoutSection } from "./LayoutSection";
 import { useT } from "../../i18n";
 import { Input, Select } from "../ui/Field";
 
@@ -22,7 +22,7 @@ export function LanguagesForm() {
   const CEFR = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;
 
   return (
-    <Section title={t("sec.languages")} onAdd={add} addLabel={t("btn.add.lang")}>
+    <LayoutSection sectionKey="languages" title={t("sec.languages")} onAdd={add} addLabel={t("btn.add.lang")}>
       {items.map((l) => (
         <div
           key={l.id}
@@ -69,10 +69,10 @@ export function LanguagesForm() {
             label={t("field.certificate")}
             value={l.certificate ?? ""}
             onChange={(e) => update(l.id, { certificate: e.target.value })}
-            placeholder="Cambridge C1, DELF B2, …"
+            placeholder={t("placeholder.certificate")}
           />
         </div>
       ))}
-    </Section>
+    </LayoutSection>
   );
 }

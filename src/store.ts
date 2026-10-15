@@ -12,11 +12,31 @@ import type {
   Language,
   Interest,
   Meta,
+  Column,
+  CustomEntry,
+  CustomSection,
+  CustomSectionKind,
 } from "./types";
 import { buildSampleCV } from "./data/sampleData";
-import type { Locale } from "./i18n/translations";
+import { columnOf, defaultSectionOrder } from "./data/sections";
+import { translate, type Locale } from "./i18n/translations";
 
 const createId = () => crypto.randomUUID();
+
+const moveItem = <T>(items: readonly T[], index: number, dir: -1 | 1): T[] | undefined => {
+  const destination = index + dir;
+  if (index < 0 || destination < 0 || destination >= items.length) return undefined;
+  const moved = [...items];
+  [moved[index], moved[destination]] = [moved[destination], moved[index]];
+  return moved;
+};
+
+const emptyEntry = (): CustomEntry => ({ id: createId(), title: "", subtitle: "", period: "", details: "" });
+
+const withCustomSection = (cv: CV, id: string, update: (section: CustomSection) => CustomSection): CV => ({
+  ...cv,
+  customSections: cv.customSections.map((section) => (section.id === id ? update(section) : section)),
+});
 
 interface State {
   cv: CV;
@@ -29,6 +49,8 @@ interface State {
   setSummary: (s: string) => void;
   patchMeta: (patch: Partial<Meta>) => void;
   setLocale: (locale: Locale) => void;
+  moveSection: (key: string, dir: -1 | 1) => void;
+  renameSection: (key: string, title: string) => void;
 
   addExperience: () => void;
   updateExperience: (id: string, patch: Partial<Omit<Experience, "id">>) => void;
@@ -58,6 +80,13 @@ interface State {
   addInterest: (label?: string) => void;
   updateInterest: (id: string, patch: Partial<Omit<Interest, "id">>) => void;
   removeInterest: (id: string) => void;
+
+  addCustomSection: (column: Column, kind: CustomSectionKind, title: string) => void;
+  updateCustomSection: (id: string, patch: Partial<Omit<CustomSection, "id" | "kind">>) => void;
+  removeCustomSection: (id: string) => void;
+  addCustomEntry: (sectionId: string) => void;
+  updateCustomEntry: (sectionId: string, entryId: string, patch: Partial<Omit<CustomEntry, "id">>) => void;
+  removeCustomEntry: (sectionId: string, entryId: string) => void;
 }
 
 const blankCV = (locale: Locale = "en"): CV => ({
@@ -79,12 +108,16 @@ const blankCV = (locale: Locale = "en"): CV => ({
   certifications: [],
   languages: [],
   interests: [],
+  customSections: [],
   meta: {
     template: "modern",
     accent: "cyan",
     showPhotoMonogram: true,
     density: "compact",
     locale,
+    documentTitle: translate(locale, "cv.label"),
+    sectionOrder: defaultSectionOrder(),
+    sectionTitles: {},
   },
 });
 
@@ -107,6 +140,19 @@ export const useStore = create<State>()(
         set((s) => ({ cv: { ...s.cv, meta: { ...s.cv.meta, ...patch } } })),
       setLocale: (locale) =>
         set((s) => ({ cv: { ...s.cv, meta: { ...s.cv.meta, locale } } })),
+      moveSection: (key, dir) =>
+        set((s) => {
+          const { sectionOrder } = s.cv.meta;
+          const column = columnOf(sectionOrder, key);
+          const keys = column && moveItem(sectionOrder[column], sectionOrder[column].indexOf(key), dir);
+          return column && keys
+            ? { cv: { ...s.cv, meta: { ...s.cv.meta, sectionOrder: { ...sectionOrder, [column]: keys } } } }
+            : s;
+        }),
+      renameSection: (key, title) =>
+        set((s) => ({
+          cv: { ...s.cv, meta: { ...s.cv.meta, sectionTitles: { ...s.cv.meta.sectionTitles, [key]: title } } },
+        })),
 
       addExperience: () =>
         set((s) => ({
@@ -140,12 +186,8 @@ export const useStore = create<State>()(
         })),
       moveExperience: (eid, dir) =>
         set((s) => {
-          const experience = [...s.cv.experience];
-          const sourceIndex = experience.findIndex((entry) => entry.id === eid);
-          const destinationIndex = sourceIndex + dir;
-          if (sourceIndex < 0 || destinationIndex < 0 || destinationIndex >= experience.length) return s;
-          [experience[sourceIndex], experience[destinationIndex]] = [experience[destinationIndex], experience[sourceIndex]];
-          return { cv: { ...s.cv, experience } };
+          const experience = moveItem(s.cv.experience, s.cv.experience.findIndex((entry) => entry.id === eid), dir);
+          return experience ? { cv: { ...s.cv, experience } } : s;
         }),
 
       addEducation: () =>
@@ -267,6 +309,64 @@ export const useStore = create<State>()(
         })),
       removeInterest: (iid) =>
         set((s) => ({ cv: { ...s.cv, interests: s.cv.interests.filter((i) => i.id !== iid) } })),
+
+      addCustomSection: (column, kind, title) =>
+        set((s) => {
+          const id = createId();
+          const { sectionOrder, sectionTitles } = s.cv.meta;
+          return {
+            cv: {
+              ...s.cv,
+              customSections: [
+                ...s.cv.customSections,
+                { id, kind, text: "", items: [], entries: kind === "entries" ? [emptyEntry()] : [] },
+              ],
+              meta: {
+                ...s.cv.meta,
+                sectionOrder: { ...sectionOrder, [column]: [...sectionOrder[column], id] },
+                sectionTitles: { ...sectionTitles, [id]: title },
+              },
+            },
+          };
+        }),
+      updateCustomSection: (id, patch) =>
+        set((s) => ({ cv: withCustomSection(s.cv, id, (section) => ({ ...section, ...patch })) })),
+      removeCustomSection: (id) =>
+        set((s) => {
+          const { sectionOrder, sectionTitles: { [id]: _removed, ...sectionTitles } } = s.cv.meta;
+          return {
+            cv: {
+              ...s.cv,
+              customSections: s.cv.customSections.filter((section) => section.id !== id),
+              meta: {
+                ...s.cv.meta,
+                sectionOrder: {
+                  main: sectionOrder.main.filter((key) => key !== id),
+                  sidebar: sectionOrder.sidebar.filter((key) => key !== id),
+                },
+                sectionTitles,
+              },
+            },
+          };
+        }),
+      addCustomEntry: (sectionId) =>
+        set((s) => ({
+          cv: withCustomSection(s.cv, sectionId, (section) => ({ ...section, entries: [emptyEntry(), ...section.entries] })),
+        })),
+      updateCustomEntry: (sectionId, entryId, patch) =>
+        set((s) => ({
+          cv: withCustomSection(s.cv, sectionId, (section) => ({
+            ...section,
+            entries: section.entries.map((entry) => (entry.id === entryId ? { ...entry, ...patch } : entry)),
+          })),
+        })),
+      removeCustomEntry: (sectionId, entryId) =>
+        set((s) => ({
+          cv: withCustomSection(s.cv, sectionId, (section) => ({
+            ...section,
+            entries: section.entries.filter((entry) => entry.id !== entryId),
+          })),
+        })),
     }),
     {
       name: "cv-generator/v1",

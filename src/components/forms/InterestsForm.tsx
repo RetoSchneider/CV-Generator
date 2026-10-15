@@ -1,6 +1,6 @@
 import { X } from "lucide-react";
 import { useStore } from "../../store";
-import { Section } from "../ui/Section";
+import { LayoutSection } from "./LayoutSection";
 import { useT } from "../../i18n";
 
 export function InterestsForm() {
@@ -11,7 +11,7 @@ export function InterestsForm() {
   const remove = useStore((s) => s.removeInterest);
 
   return (
-    <Section title={t("sec.interests")} onAdd={() => add("")} addLabel={t("btn.add.tag")}>
+    <LayoutSection sectionKey="interests" title={t("sec.interests")} onAdd={() => add("")} addLabel={t("btn.add.tag")}>
       <div className="flex flex-wrap gap-2">
         {items.map((i) => (
           <div
@@ -34,6 +34,6 @@ export function InterestsForm() {
           </div>
         ))}
       </div>
-    </Section>
+    </LayoutSection>
   );
 }

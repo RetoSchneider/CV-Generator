@@ -1,11 +1,17 @@
 import type { CV } from "../types";
-import type { Locale } from "../i18n/translations";
+import { translate, type Locale } from "../i18n/translations";
+import { defaultSectionOrder } from "./sections";
 
 const id = () => Math.random().toString(36).slice(2, 10);
 
 interface SampleStrings {
   fullName: string;
   title: string;
+  location: string;
+  remoteLocation: string;
+  schoolName: string;
+  email: string;
+  handle: string;
   summary: string;
   currentCompany: string;
   firstEmployer: string;
@@ -14,6 +20,7 @@ interface SampleStrings {
   bootcampNotes: string;
   schoolDiploma: string;
   schoolNotes: string;
+  currentRole: string;
   juniorRole: string;
   bootcampRole: string;
   resetRole: string;
@@ -56,12 +63,23 @@ interface SampleStrings {
   highlight_bootcamp_1: string;
   highlight_bootcamp_2: string;
   highlight_bootcamp_3: string;
+  project_cv_tagline: string;
+  project_cv_highlight_1: string;
+  project_cv_highlight_2: string;
+  project_raid_tagline: string;
+  project_raid_highlight_1: string;
+  project_raid_highlight_2: string;
 }
 
 const STRINGS: Record<Locale, SampleStrings> = {
   en: {
     fullName: "Your Name",
     title: "Software Engineer · QA / Test Automation",
+    location: "City, Country",
+    remoteLocation: "City / Remote",
+    schoolName: "School Name",
+    email: "you@domain.dev",
+    handle: "yourname",
     summary:
       "Self-taught software engineer with 4+ years of production experience after a full-stack bootcamp. I ship pragmatic features end-to-end and treat quality as a first-class concern — I write the tests I wish my past self had written. Comfortable across the stack, sharper on the test-automation and reliability side. Career-changer; the years before IT taught me to communicate with humans, not just compilers.",
     currentCompany: "Current Company",
@@ -71,6 +89,7 @@ const STRINGS: Record<Locale, SampleStrings> = {
     bootcampNotes: "JavaScript, React, Node, SQL/NoSQL, Git, deployment, agile basics.",
     schoolDiploma: "Secondary School Diploma",
     schoolNotes: "No university degree — entered tech through bootcamp + portfolio.",
+    currentRole: "Software Engineer / QA Automation",
     juniorRole: "Junior Software Developer",
     bootcampRole: "Full-Stack Web Development Bootcamp",
     resetRole: "Career Reset · Self-Directed Study",
@@ -119,11 +138,22 @@ const STRINGS: Record<Locale, SampleStrings> = {
     highlight_bootcamp_1: "Intensive 6-month program: HTML/CSS/JS → React → Node/Express → SQL/NoSQL → deployment.",
     highlight_bootcamp_2: "Capstone: a full-stack inventory app with auth, role-based access, and a CI pipeline.",
     highlight_bootcamp_3: "Graduated top 10% of cohort; mentored two later cohorts on Git/PR hygiene.",
+    project_cv_tagline: "Local-first CV generator with PDF + DOCX export.",
+    project_cv_highlight_1: "Live preview and no backend — runs entirely in the browser.",
+    project_cv_highlight_2: "PDF export with selectable text plus a text-based Word export for applicant tracking systems.",
+    project_raid_tagline: "Lightweight scheduler for guild raids with role-balancing.",
+    project_raid_highlight_1: "Side project that started as a Discord bot, now ~40 weekly active users from my guild.",
+    project_raid_highlight_2: "Forced me to actually learn auth, rate-limiting, and 'people will misuse this' edge cases.",
   },
 
   de: {
     fullName: "Dein Name",
     title: "Software Engineer · QA / Test-Automation",
+    location: "Stadt, Land",
+    remoteLocation: "Stadt / Remote",
+    schoolName: "Name der Schule",
+    email: "dein.name@domain.dev",
+    handle: "deinname",
     summary:
       "Quereinsteiger mit 4+ Jahren Produktionserfahrung nach einem Full-Stack-Bootcamp — ohne Studium, dafür mit Portfolio. Ich liefere Features pragmatisch von Anfang bis Ende und behandle Qualität als First-Class-Thema; ich schreibe die Tests, die ich mir früher gewünscht hätte. Bin im ganzen Stack zu Hause, am stärksten im Bereich Testautomatisierung und Reliability. Die Jahre vor der IT haben mich gelehrt, mit Menschen zu sprechen, nicht nur mit Compilern.",
     currentCompany: "Aktueller Arbeitgeber",
@@ -133,6 +163,7 @@ const STRINGS: Record<Locale, SampleStrings> = {
     bootcampNotes: "JavaScript, React, Node, SQL/NoSQL, Git, Deployment, Agile-Grundlagen.",
     schoolDiploma: "Mittlere Reife / Abitur",
     schoolNotes: "Kein Studium — Einstieg in die IT über Bootcamp + Portfolio.",
+    currentRole: "Software Engineer / QA-Automation",
     juniorRole: "Junior Software Developer",
     bootcampRole: "Full-Stack Web Development Bootcamp",
     resetRole: "Karriere-Neustart · Eigenstudium",
@@ -182,11 +213,22 @@ const STRINGS: Record<Locale, SampleStrings> = {
     highlight_bootcamp_1: "Intensives 6-monatiges Programm: HTML/CSS/JS → React → Node/Express → SQL/NoSQL → Deployment.",
     highlight_bootcamp_2: "Capstone: Full-Stack-Inventar-App mit Auth, Rollen-Rechten und CI-Pipeline.",
     highlight_bootcamp_3: "Top 10 % der Kohorte; zwei nachfolgende Kohorten in Git/PR-Hygiene gementored.",
+    project_cv_tagline: "Local-first CV-Generator mit PDF- und DOCX-Export.",
+    project_cv_highlight_1: "Live-Vorschau ohne Backend — läuft komplett im Browser.",
+    project_cv_highlight_2: "PDF-Export mit markierbarem Text plus textbasierter Word-Export für Bewerbermanagementsysteme.",
+    project_raid_tagline: "Leichtgewichtiger Planer für Gilden-Raids mit Rollenausgleich.",
+    project_raid_highlight_1: "Nebenprojekt, das als Discord-Bot begann — heute ~40 wöchentlich aktive Nutzer:innen aus meiner Gilde.",
+    project_raid_highlight_2: "Hat mich gezwungen, Auth, Rate-Limiting und „Leute werden das missbrauchen“-Randfälle wirklich zu lernen.",
   },
 
   fr: {
     fullName: "Votre Nom",
     title: "Software Engineer · QA / Automatisation des tests",
+    location: "Ville, Pays",
+    remoteLocation: "Ville / À distance",
+    schoolName: "Nom de l'école",
+    email: "votre.nom@domaine.dev",
+    handle: "votrenom",
     summary:
       "Ingénieur logiciel autodidacte avec 4+ ans d'expérience en production après un bootcamp full-stack. Je livre des fonctionnalités de bout en bout, pragmatiquement, et je traite la qualité comme un sujet de premier plan — j'écris les tests que mon moi passé aurait aimé avoir. À l'aise sur tout le stack, plus pointu en automatisation des tests et fiabilité. Reconverti ; les années pré-IT m'ont appris à parler aux humains, pas seulement aux compilateurs.",
     currentCompany: "Entreprise actuelle",
@@ -196,6 +238,7 @@ const STRINGS: Record<Locale, SampleStrings> = {
     bootcampNotes: "JavaScript, React, Node, SQL/NoSQL, Git, déploiement, bases de l'agile.",
     schoolDiploma: "Diplôme du secondaire",
     schoolNotes: "Pas de diplôme universitaire — entrée dans la tech via bootcamp + portfolio.",
+    currentRole: "Ingénieur logiciel / Automatisation QA",
     juniorRole: "Développeur logiciel junior",
     bootcampRole: "Bootcamp développement web full-stack",
     resetRole: "Reconversion · Étude autonome",
@@ -245,11 +288,22 @@ const STRINGS: Record<Locale, SampleStrings> = {
     highlight_bootcamp_1: "Programme intensif de 6 mois : HTML/CSS/JS → React → Node/Express → SQL/NoSQL → déploiement.",
     highlight_bootcamp_2: "Projet final : appli inventaire full-stack avec auth, rôles et pipeline CI.",
     highlight_bootcamp_3: "Diplômé dans le top 10 % de la promo ; mentorat de deux promos suivantes sur l'hygiène Git/PR.",
+    project_cv_tagline: "Générateur de CV local-first avec export PDF + DOCX.",
+    project_cv_highlight_1: "Aperçu en direct, sans backend — tourne entièrement dans le navigateur.",
+    project_cv_highlight_2: "Export PDF avec texte sélectionnable et export Word textuel pour les logiciels de recrutement.",
+    project_raid_tagline: "Planificateur léger de raids de guilde avec équilibrage des rôles.",
+    project_raid_highlight_1: "Projet perso né comme bot Discord, aujourd'hui ~40 utilisateurs actifs par semaine dans ma guilde.",
+    project_raid_highlight_2: "M'a obligé à vraiment apprendre l'auth, le rate-limiting et les cas limites « les gens vont en abuser ».",
   },
 
   it: {
     fullName: "Il Tuo Nome",
     title: "Software Engineer · QA / Test Automation",
+    location: "Città, Paese",
+    remoteLocation: "Città / Da remoto",
+    schoolName: "Nome della scuola",
+    email: "tuo.nome@dominio.dev",
+    handle: "tuonome",
     summary:
       "Ingegnere software autodidatta con 4+ anni di esperienza in produzione dopo un bootcamp full-stack. Rilascio feature pragmatiche end-to-end e tratto la qualità come tema di prima fascia — scrivo i test che il mio io passato avrebbe voluto avere. Mi muovo su tutto lo stack, più a fondo su test automation e reliability. Ho cambiato carriera; gli anni pre-IT mi hanno insegnato a parlare con le persone, non solo con i compilatori.",
     currentCompany: "Azienda attuale",
@@ -259,6 +313,7 @@ const STRINGS: Record<Locale, SampleStrings> = {
     bootcampNotes: "JavaScript, React, Node, SQL/NoSQL, Git, deployment, basi di agile.",
     schoolDiploma: "Diploma di scuola superiore",
     schoolNotes: "Nessuna laurea — ingresso nel tech tramite bootcamp + portfolio.",
+    currentRole: "Software Engineer / QA Automation",
     juniorRole: "Junior Software Developer",
     bootcampRole: "Bootcamp di sviluppo web full-stack",
     resetRole: "Riconversione · Studio autonomo",
@@ -308,6 +363,12 @@ const STRINGS: Record<Locale, SampleStrings> = {
     highlight_bootcamp_1: "Programma intensivo di 6 mesi: HTML/CSS/JS → React → Node/Express → SQL/NoSQL → deployment.",
     highlight_bootcamp_2: "Progetto finale: app inventario full-stack con auth, ruoli e pipeline CI.",
     highlight_bootcamp_3: "Diplomato nel top 10 % della classe; mentor di due classi successive su igiene Git/PR.",
+    project_cv_tagline: "Generatore di CV local-first con export PDF + DOCX.",
+    project_cv_highlight_1: "Anteprima live e nessun backend — gira interamente nel browser.",
+    project_cv_highlight_2: "Export PDF con testo selezionabile ed export Word testuale per i sistemi di selezione del personale.",
+    project_raid_tagline: "Pianificatore leggero per i raid di gilda con bilanciamento dei ruoli.",
+    project_raid_highlight_1: "Progetto personale nato come bot Discord, oggi ~40 utenti attivi a settimana nella mia gilda.",
+    project_raid_highlight_2: "Mi ha costretto a imparare davvero auth, rate limiting e i casi limite „la gente ne abuserà“.",
   },
 };
 
@@ -318,12 +379,12 @@ export function buildSampleCV(locale: Locale = "en"): CV {
     personal: {
       fullName: s.fullName,
       title: s.title,
-      location: "City, Country",
-      email: "you@domain.dev",
+      location: s.location,
+      email: s.email,
       phone: "+00 000 000 0000",
-      website: "yourname.dev",
-      github: "github.com/yourname",
-      linkedin: "linkedin.com/in/yourname",
+      website: `${s.handle}.dev`,
+      github: `github.com/${s.handle}`,
+      linkedin: `linkedin.com/in/${s.handle}`,
       pronouns: "",
       photoShape: "circle",
     },
@@ -333,11 +394,11 @@ export function buildSampleCV(locale: Locale = "en"): CV {
     experience: [
       {
         id: id(),
-        role: "Software Engineer / QA Automation",
+        role: s.currentRole,
         company: s.currentCompany,
-        location: "City, Country",
+        location: s.location,
         start: "2022-08",
-        end: "Present",
+        end: translate(locale, "cv.present"),
         stack: ["TypeScript", "React", "Node", "Playwright", "Cypress", "Docker", "GitHub Actions"],
         highlights: [
           s.highlight_current_1,
@@ -350,7 +411,7 @@ export function buildSampleCV(locale: Locale = "en"): CV {
         id: id(),
         role: s.juniorRole,
         company: s.firstEmployer,
-        location: "City, Country",
+        location: s.location,
         start: "2021-09",
         end: "2022-07",
         stack: ["JavaScript", "React", "Express", "PostgreSQL", "Jest"],
@@ -360,7 +421,7 @@ export function buildSampleCV(locale: Locale = "en"): CV {
         id: id(),
         role: s.bootcampRole,
         company: s.bootcampProvider,
-        location: "City / Remote",
+        location: s.remoteLocation,
         start: "2021-03",
         end: "2021-08",
         stack: ["JavaScript", "React", "Node", "MongoDB", "Git"],
@@ -405,7 +466,7 @@ export function buildSampleCV(locale: Locale = "en"): CV {
         id: id(),
         credential: s.bootcampProgram,
         institution: s.bootcampProvider,
-        location: "City / Remote",
+        location: s.remoteLocation,
         start: "2021-03",
         end: "2021-08",
         notes: s.bootcampNotes,
@@ -413,8 +474,8 @@ export function buildSampleCV(locale: Locale = "en"): CV {
       {
         id: id(),
         credential: s.schoolDiploma,
-        institution: "School Name",
-        location: "City, Country",
+        institution: s.schoolName,
+        location: s.location,
         start: "—",
         end: "—",
         notes: s.schoolNotes,
@@ -438,24 +499,18 @@ export function buildSampleCV(locale: Locale = "en"): CV {
       {
         id: id(),
         name: "cv-forge",
-        tagline: "Local-first CV generator with PDF + DOCX export.",
-        link: "github.com/yourname/cv-forge",
+        tagline: s.project_cv_tagline,
+        link: `github.com/${s.handle}/cv-forge`,
         stack: ["React", "TypeScript", "Tailwind", "Zustand", "docx"],
-        highlights: [
-          "Live preview and no backend — runs entirely in the browser.",
-          "PDF export with selectable text plus a text-based Word export for applicant tracking systems.",
-        ],
+        highlights: [s.project_cv_highlight_1, s.project_cv_highlight_2],
       },
       {
         id: id(),
         name: "raid-planner",
-        tagline: "Lightweight scheduler for guild raids with role-balancing.",
-        link: "github.com/yourname/raid-planner",
+        tagline: s.project_raid_tagline,
+        link: `github.com/${s.handle}/raid-planner`,
         stack: ["Next.js", "Prisma", "Postgres"],
-        highlights: [
-          "Side project that started as a Discord bot, now ~40 weekly active users from my guild.",
-          "Forced me to actually learn auth, rate-limiting, and 'people will misuse this' edge cases.",
-        ],
+        highlights: [s.project_raid_highlight_1, s.project_raid_highlight_2],
       },
     ],
 
@@ -476,12 +531,17 @@ export function buildSampleCV(locale: Locale = "en"): CV {
       { id: id(), label: s.interest_scifi },
     ],
 
+    customSections: [],
+
     meta: {
       template: "modern",
       accent: "cyan",
       showPhotoMonogram: true,
       density: "compact",
       locale,
+      documentTitle: translate(locale, "cv.label"),
+      sectionOrder: defaultSectionOrder(),
+      sectionTitles: {},
     },
   };
 }

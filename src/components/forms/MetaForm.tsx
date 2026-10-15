@@ -1,5 +1,6 @@
 import { useStore } from "../../store";
 import { Section } from "../ui/Section";
+import { Input } from "../ui/Field";
 import type { AccentTone } from "../../types";
 import { LOCALES, useT } from "../../i18n";
 
@@ -47,6 +48,13 @@ export function MetaForm() {
             })}
           </div>
         </div>
+
+        <Input
+          label={t("theme.documentTitle")}
+          value={meta.documentTitle}
+          onChange={(e) => patchMeta({ documentTitle: e.target.value })}
+          placeholder={t("cv.label")}
+        />
 
         <div>
           <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-400 mb-1.5">

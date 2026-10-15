@@ -3,6 +3,13 @@ import { chromium } from '@playwright/test';
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
 import { createServer } from 'vite';
 
+const CONTACT_LINKS = {
+  en: ['mailto:you@domain.dev', 'https://yourname.dev/', 'https://github.com/yourname', 'https://linkedin.com/in/yourname'],
+  de: ['mailto:dein.name@domain.dev', 'https://deinname.dev/', 'https://github.com/deinname', 'https://linkedin.com/in/deinname'],
+  fr: ['mailto:votre.nom@domaine.dev', 'https://votrenom.dev/', 'https://github.com/votrenom', 'https://linkedin.com/in/votrenom'],
+  it: ['mailto:tuo.nome@dominio.dev', 'https://tuonome.dev/', 'https://github.com/tuonome', 'https://linkedin.com/in/tuonome'],
+};
+
 const server = await createServer({ server: { host: '127.0.0.1', port: 0, open: false } });
 let browser;
 try {
@@ -14,17 +21,29 @@ try {
   const page = await browser.newPage({ viewport: { width: 1400, height: 1400 } });
   const printPage = await browser.newPage();
   await page.goto(url);
-  for (const fixture of ['en', 'de', 'fr', 'it', 'comfortable', 'long', 'oversized', 'paragraph', 'minimal']) {
-    const prepared = await page.evaluate(async fixture => {
+  for (const fixture of ['en', 'de', 'fr', 'it', 'comfortable', 'reordered', 'long', 'oversized', 'paragraph', 'minimal']) {
+    const locale = ['de', 'fr', 'it'].includes(fixture) ? fixture : 'en';
+    const prepared = await page.evaluate(async ({ fixture, locale }) => {
       const { useStore } = await import('/src/store.ts');
       const { buildSampleCV } = await import('/src/data/sampleData.ts');
       const { normalizeCV } = await import('/src/data/normalizeCV.ts');
       const { preparePdfDocument } = await import('/src/utils/exportPdf.ts');
-      const cv = fixture === 'minimal' ? normalizeCV({ personal: { fullName: 'QAName' } }) : buildSampleCV(['de','fr','it'].includes(fixture) ? fixture : 'en');
+      const cv = fixture === 'minimal' ? normalizeCV({ personal: { fullName: 'QAName' } }) : buildSampleCV(locale);
       cv.personal.fullName = 'QAName';
       cv.personal.title = 'Software Test Engineer';
       if (fixture !== 'minimal') cv.summary = 'QAProfile: Gränichen, Zürich, français, qualità, Prüfung & C#.';
       if (fixture === 'comfortable') cv.meta.density = 'comfortable';
+      if (fixture === 'reordered') {
+        cv.meta.sectionOrder.main.reverse();
+        cv.meta.sectionOrder.sidebar.reverse();
+        cv.customSections = [
+          { id: 'custom-text', kind: 'text', text: 'QACustomText1END available on short notice.', items: [], entries: [] },
+          { id: 'custom-list', kind: 'list', text: '', items: ['QACustomItem2END', 'Category B'], entries: [] },
+          { id: 'custom-entries', kind: 'entries', text: '', items: [], entries: [{ id: 'entry', title: 'QACustomEntry3END', subtitle: 'Red Cross', period: '2020', details: 'First aid' }] },
+        ];
+        cv.meta.sectionOrder.main.unshift('custom-text', 'custom-entries');
+        cv.meta.sectionOrder.sidebar.push('custom-list');
+      }
       if (fixture === 'long') {
         cv.experience = Array.from({length:24}, (_,i) => ({...cv.experience[0],id:'exp'+i}));
         cv.skills = Array.from({length:28}, (_,i) => ({...cv.skills[0],id:'skill'+i}));
@@ -45,7 +64,7 @@ try {
       const result = { html: doc.documentElement.outerHTML, count: doc.querySelectorAll('.cv-print-sheet').length, markers, unchanged: before === node.outerHTML, title: doc.title };
       frame.remove();
       return result;
-    }, fixture);
+    }, { fixture, locale });
     assert(prepared.unchanged, 'Export must not change the preview');
     assert.equal(prepared.title, 'QA <safe>');
     await printPage.setContent(prepared.html, { waitUntil: 'networkidle' });
@@ -94,11 +113,8 @@ try {
       }
     }
     const normalized = allText.replace(/\s/g, '');
-    const expectedLinks = fixture === 'minimal' ? [] : [
-      'mailto:you@domain.dev', 'https://yourname.dev/',
-      'https://github.com/yourname', 'https://linkedin.com/in/yourname',
-    ];
-    assert.deepEqual([...new Set(linkTargets)].sort(), expectedLinks.sort(), `${fixture}: PDF links have explicit external destinations`);
+    const expectedLinks = fixture === 'minimal' ? [] : CONTACT_LINKS[locale];
+    assert.deepEqual([...new Set(linkTargets)].sort(), [...expectedLinks].sort(), `${fixture}: PDF links have explicit external destinations`);
     for (const marker of prepared.markers) {
       assert.equal(normalized.toLowerCase().split(marker.toLowerCase()).length - 1, 1, `${fixture}: ${marker} must appear exactly once`);
     }

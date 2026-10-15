@@ -1,4 +1,6 @@
-import type { CV } from "../types";
+import type { Column, CV, Meta } from "../types";
+import { translate } from "../i18n/translations";
+import { COLUMNS, CUSTOM_SECTION_KINDS, DEFAULT_SECTION_ORDER, isSectionId } from "./sections";
 
 export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -37,10 +39,54 @@ function readStringList(v: unknown): string[] {
   return Array.isArray(v) ? v.filter((x) => typeof x === "string") : [];
 }
 
+function readSectionOrder(value: unknown, customIds: string[]): Meta["sectionOrder"] {
+  const saved = isRecord(value) ? value : {};
+  const order: Meta["sectionOrder"] = { main: [], sidebar: [] };
+  const placed = new Set<string>();
+  const belongsTo = (column: Column, key: string) =>
+    customIds.includes(key) || DEFAULT_SECTION_ORDER[column].some((id) => id === key);
+  const place = (column: Column, keys: readonly string[]) => {
+    for (const key of keys) {
+      if (placed.has(key) || !belongsTo(column, key)) continue;
+      placed.add(key);
+      order[column].push(key);
+    }
+  };
+  for (const column of COLUMNS) place(column, readStringList(saved[column]));
+  for (const column of COLUMNS) place(column, DEFAULT_SECTION_ORDER[column]);
+  place("main", customIds);
+  return order;
+}
+
+function readSectionTitles(value: unknown, order: Meta["sectionOrder"]): Meta["sectionTitles"] {
+  const saved = isRecord(value) ? value : {};
+  return Object.fromEntries(
+    COLUMNS.flatMap((column) => order[column]).flatMap((key) => {
+      const title = saved[key];
+      return typeof title === "string" ? [[key, title] as const] : [];
+    })
+  );
+}
+
 export function normalizeCV(input: unknown): CV {
   if (!isRecord(input) || !isRecord(input.personal)) throw new Error("invalid-shape");
   const p = input.personal;
   const m = isRecord(input.meta) ? input.meta : {};
+  const locale = readChoice(m.locale, ["en", "de", "fr", "it"], "en");
+  const customSections = readRecords(input.customSections).map((section) => ({
+    id: isSectionId(readString(section.id)) ? crypto.randomUUID() : readString(section.id),
+    kind: readChoice(section.kind, CUSTOM_SECTION_KINDS, "text"),
+    text: readString(section.text),
+    items: readStringList(section.items),
+    entries: readRecords(section.entries).map((entry) => ({
+      id: readString(entry.id),
+      title: readString(entry.title),
+      subtitle: readString(entry.subtitle),
+      period: readString(entry.period),
+      details: readString(entry.details),
+    })),
+  }));
+  const sectionOrder = readSectionOrder(m.sectionOrder, customSections.map((section) => section.id));
   return {
     personal: {
       fullName: readString(p.fullName),
@@ -107,12 +153,16 @@ export function normalizeCV(input: unknown): CV {
       id: readString(i.id),
       label: readString(i.label),
     })),
+    customSections,
     meta: {
       template: "modern",
       accent: readChoice(m.accent, ["cyan", "violet", "emerald", "amber", "rose"], "cyan"),
       showPhotoMonogram: m.showPhotoMonogram !== false,
       density: m.density === "comfortable" ? "comfortable" : "compact",
-      locale: readChoice(m.locale, ["en", "de", "fr", "it"], "en"),
+      locale,
+      documentTitle: readString(m.documentTitle, translate(locale, "cv.label")),
+      sectionOrder,
+      sectionTitles: readSectionTitles(m.sectionTitles, sectionOrder),
     },
   };
 }
@@ -121,6 +171,6 @@ export function hasContent(cv: CV): boolean {
   const { photoShape: _photoShape, ...personal } = cv.personal;
   return Object.values(personal).some((value) => typeof value === "string" && value.trim().length > 0)
     || cv.summary.trim().length > 0
-    || [cv.experience, cv.education, cv.skills, cv.projects, cv.certifications, cv.languages, cv.interests]
+    || [cv.experience, cv.education, cv.skills, cv.projects, cv.certifications, cv.languages, cv.interests, cv.customSections]
       .some((entries) => entries.length > 0);
 }

@@ -11,6 +11,9 @@ A browser-based CV editor with a live preview, PDF and Word export, and an Engli
 ## Features
 
 - Live preview while you type
+- Sections are grouped by column (main column on the right, sidebar on the left) and can be reordered within it; the preview, PDF and Word export follow the same order
+- Section headings can be renamed, and you can add your own sections (text, keywords or entries) to either column
+- Editable document title above the name, "Curriculum Vitae" by default
 - PDF export through the browser's print dialog, with selectable text and A4 pages where the sidebar and main column break independently
 - Word (.docx) export as a simple text document for applicant tracking systems
 - Save and open your CV as a `.cvdata.json` file, with validation before anything is replaced

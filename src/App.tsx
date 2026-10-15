@@ -3,8 +3,8 @@ import {
   Download,
   FileText,
   FolderOpen,
-  Github,
   FileDown,
+  Lightbulb,
   Maximize2,
   Minus,
   Plus,
@@ -17,13 +17,7 @@ import {
 import { useStore } from "./store";
 import { ModernPro } from "./components/templates/ModernPro";
 import { PersonalForm } from "./components/forms/PersonalForm";
-import { ExperienceForm } from "./components/forms/ExperienceForm";
-import { EducationForm } from "./components/forms/EducationForm";
-import { SkillsForm } from "./components/forms/SkillsForm";
-import { ProjectsForm } from "./components/forms/ProjectsForm";
-import { CertificationsForm } from "./components/forms/CertificationsForm";
-import { LanguagesForm } from "./components/forms/LanguagesForm";
-import { InterestsForm } from "./components/forms/InterestsForm";
+import { SectionColumn } from "./components/forms/SectionColumn";
 import { MetaForm } from "./components/forms/MetaForm";
 import { useExport } from "./ui-state/useExport";
 import { useStorageStatus } from "./data/storage";
@@ -33,6 +27,7 @@ import { ConfirmDialog } from "./components/ui/ConfirmDialog";
 import { LOCALES, useT } from "./i18n";
 import { useConfirm } from "./ui-state/useConfirm";
 import type { Locale } from "./i18n/translations";
+import { COLUMNS } from "./data/sections";
 
 const ZOOM_STEP = 0.1;
 const MIN_ZOOM = 0.4;
@@ -249,13 +244,9 @@ export default function App() {
           <PaneHint />
           <MetaForm />
           <PersonalForm />
-          <ExperienceForm />
-          <SkillsForm />
-          <ProjectsForm />
-          <EducationForm />
-          <CertificationsForm />
-          <LanguagesForm />
-          <InterestsForm />
+          {COLUMNS.map((column) => (
+            <SectionColumn key={column} column={column} />
+          ))}
           <Footer />
         </aside>
 
@@ -349,7 +340,7 @@ function Footer() {
   return (
     <div className="rounded-xl border border-ink-800 bg-ink-950/40 px-3 py-2.5 text-[11.5px] text-ink-400 leading-relaxed">
       <div className="flex items-center gap-1.5 mb-1 text-ink-300">
-        <Github size={13} />
+        <Lightbulb size={13} />
         <span className="font-mono text-[11px] uppercase tracking-wider">
           {t("hint.footer.title")}
         </span>

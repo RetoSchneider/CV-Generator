@@ -1,4 +1,6 @@
-import type { AccentTone } from "../types";
+import type { AccentTone, Column, CustomSection, CV, SectionId } from "../types";
+import { isSectionId } from "../data/sections";
+import { translate, type Locale } from "../i18n/translations";
 
 export const ACCENT_HEX: Record<AccentTone, { base: string; deep: string; soft: string }> = {
   cyan: { base: "#0891b2", deep: "#155e75", soft: "#cffafe" },
@@ -7,6 +9,39 @@ export const ACCENT_HEX: Record<AccentTone, { base: string; deep: string; soft: 
   amber: { base: "#d97706", deep: "#92400e", soft: "#fef3c7" },
   rose: { base: "#e11d48", deep: "#9f1239", soft: "#ffe4e6" },
 };
+
+const SECTION_TITLE_KEYS: Record<SectionId, string> = {
+  summary: "cv.profile",
+  experience: "cv.experience",
+  projects: "cv.projects",
+  education: "cv.education",
+  skills: "cv.skills",
+  languages: "cv.languages",
+  interests: "cv.interests",
+  certifications: "cv.certifications",
+};
+
+export type PlacedSection = { key: string; title: string } & ({ builtIn: SectionId } | { custom: CustomSection });
+
+export function defaultSectionTitle(key: string, locale: Locale) {
+  return translate(locale, isSectionId(key) ? SECTION_TITLE_KEYS[key] : "cv.customSection");
+}
+
+export function placedSections(cv: CV, column: Column): PlacedSection[] {
+  const titleOf = (key: string) =>
+    cv.meta.sectionTitles[key]?.trim() || defaultSectionTitle(key, cv.meta.locale ?? "en");
+  return cv.meta.sectionOrder[column].flatMap((key): PlacedSection[] => {
+    if (isSectionId(key)) return [{ key, title: titleOf(key), builtIn: key }];
+    const custom = cv.customSections.find((section) => section.id === key);
+    return custom ? [{ key, title: titleOf(key), custom }] : [];
+  });
+}
+
+export function hasCustomContent(section: CustomSection) {
+  if (section.kind === "text") return section.text.trim().length > 0;
+  if (section.kind === "list") return section.items.length > 0;
+  return section.entries.length > 0;
+}
 
 export function initials(fullName: string) {
   const parts = fullName.trim().split(/\s+/).filter(Boolean);

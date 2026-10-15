@@ -1,6 +1,6 @@
 import { Trash2 } from "lucide-react";
 import { useStore } from "../../store";
-import { Section } from "../ui/Section";
+import { LayoutSection } from "./LayoutSection";
 import { useT } from "../../i18n";
 import { Input, Textarea } from "../ui/Field";
 import { useConfirm } from "../../ui-state/useConfirm";
@@ -41,7 +41,7 @@ export function EducationForm() {
   };
 
   return (
-    <Section title={t("sec.education")} onAdd={add} addLabel={t("btn.add.entry")}>
+    <LayoutSection sectionKey="education" title={t("sec.education")} onAdd={add} addLabel={t("btn.add.entry")}>
       {items.map((e) => (
         <div key={e.id} className="rounded-lg border border-ink-800 bg-ink-950/40 p-3 space-y-2">
           <div className="flex items-center justify-end">
@@ -90,6 +90,6 @@ export function EducationForm() {
           />
         </div>
       ))}
-    </Section>
+    </LayoutSection>
   );
 }

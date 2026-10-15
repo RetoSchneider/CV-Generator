@@ -1,6 +1,6 @@
 import { Trash2 } from "lucide-react";
 import { useStore } from "../../store";
-import { Section } from "../ui/Section";
+import { LayoutSection } from "./LayoutSection";
 import { useT } from "../../i18n";
 import { Input, TagsInput } from "../ui/Field";
 import { useConfirm } from "../../ui-state/useConfirm";
@@ -35,7 +35,7 @@ export function SkillsForm() {
   };
 
   return (
-    <Section title={t("sec.skills")} onAdd={add} addLabel={t("btn.add.group")}>
+    <LayoutSection sectionKey="skills" title={t("sec.skills")} onAdd={add} addLabel={t("btn.add.group")}>
       {items.map((g) => (
         <div key={g.id} className="rounded-lg border border-ink-800 bg-ink-950/40 p-3 space-y-2">
           <div className="flex items-center justify-between gap-2">
@@ -60,6 +60,6 @@ export function SkillsForm() {
           />
         </div>
       ))}
-    </Section>
+    </LayoutSection>
   );
 }

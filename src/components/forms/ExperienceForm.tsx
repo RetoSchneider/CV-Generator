@@ -1,5 +1,5 @@
 import { useStore } from "../../store";
-import { Section } from "../ui/Section";
+import { LayoutSection } from "./LayoutSection";
 import { Input, BulletsEditor, TagsInput } from "../ui/Field";
 import { ArrowDown, ArrowUp, Coffee, Trash2 } from "lucide-react";
 import { useT } from "../../i18n";
@@ -43,7 +43,7 @@ export function ExperienceForm() {
   };
 
   return (
-    <Section title={t("sec.experience")} onAdd={add} addLabel={t("btn.add.entry")}>
+    <LayoutSection sectionKey="experience" title={t("sec.experience")} onAdd={add} addLabel={t("btn.add.entry")}>
       {items.map((e, idx) => (
         <div
           key={e.id}
@@ -145,6 +145,6 @@ export function ExperienceForm() {
           </label>
         </div>
       ))}
-    </Section>
+    </LayoutSection>
   );
 }

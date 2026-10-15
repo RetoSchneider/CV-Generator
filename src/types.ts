@@ -1,5 +1,16 @@
 export type TemplateId = "modern";
 export type AccentTone = "cyan" | "violet" | "emerald" | "amber" | "rose";
+export type Column = "main" | "sidebar";
+export type SectionId =
+  | "summary"
+  | "experience"
+  | "projects"
+  | "education"
+  | "skills"
+  | "languages"
+  | "interests"
+  | "certifications";
+export type CustomSectionKind = "text" | "list" | "entries";
 
 export interface Personal {
   fullName: string;
@@ -79,6 +90,22 @@ export interface Interest {
   label: string;
 }
 
+export interface CustomEntry {
+  id: string;
+  title: string;
+  subtitle: string;
+  period: string;
+  details: string;
+}
+
+export interface CustomSection {
+  id: string;
+  kind: CustomSectionKind;
+  text: string;
+  items: string[];
+  entries: CustomEntry[];
+}
+
 export interface Meta {
   template: TemplateId;
   accent: AccentTone;
@@ -87,6 +114,10 @@ export interface Meta {
   density: "comfortable" | "compact";
 
   locale?: "en" | "de" | "fr" | "it";
+
+  documentTitle: string;
+  sectionOrder: Record<Column, string[]>;
+  sectionTitles: Partial<Record<string, string>>;
 }
 
 export interface CV {
@@ -99,5 +130,6 @@ export interface CV {
   certifications: Certification[];
   languages: Language[];
   interests: Interest[];
+  customSections: CustomSection[];
   meta: Meta;
 }

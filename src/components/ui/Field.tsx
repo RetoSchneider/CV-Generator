@@ -64,7 +64,7 @@ export function TagsInput({
   onChange: (next: string[]) => void;
   placeholder?: string;
 }) {
-
+  const t = useT();
   const id = useId();
   const [text, setText] = useState(value.join(", "));
   useEffect(() => {
@@ -87,7 +87,7 @@ export function TagsInput({
           onChange(parseTags(e.target.value));
         }}
         onBlur={() => setText(value.join(", "))}
-        placeholder={placeholder ?? "Comma, separated, list"}
+        placeholder={placeholder ?? t("placeholder.tags")}
       />
     </div>
   );

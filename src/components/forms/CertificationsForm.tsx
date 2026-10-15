@@ -1,6 +1,6 @@
 import { Trash2 } from "lucide-react";
 import { useStore } from "../../store";
-import { Section } from "../ui/Section";
+import { LayoutSection } from "./LayoutSection";
 import { useT } from "../../i18n";
 import { Input } from "../ui/Field";
 import { useConfirm } from "../../ui-state/useConfirm";
@@ -35,7 +35,7 @@ export function CertificationsForm() {
   };
 
   return (
-    <Section title={t("sec.certifications")} onAdd={add} addLabel={t("btn.add.entry")}>
+    <LayoutSection sectionKey="certifications" title={t("sec.certifications")} onAdd={add} addLabel={t("btn.add.entry")}>
       {items.map((c) => (
         <div key={c.id} className="rounded-lg border border-ink-800 bg-ink-950/40 p-3 space-y-2">
           <div className="grid grid-cols-2 gap-2.5">
@@ -71,6 +71,6 @@ export function CertificationsForm() {
           </div>
         </div>
       ))}
-    </Section>
+    </LayoutSection>
   );
 }
