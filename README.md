@@ -40,7 +40,7 @@ For the PDF export, choose A4, 100 % scale and no headers or footers in the prin
 | -------- | ------------------------ | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Unit     | `tests/unit`             | Vitest                     | File and storage validation, ID repair, photo restrictions, overwrite detection, store actions, section order and custom sections, pagination, Word output in all four languages                                    |
 | UI flows | `tests/e2e`              | Playwright Test (Chromium) | Editing and reload, language switch, moving and renaming sections, custom sections, clearing, photo upload and removal, save/open round trip, invalid files, keyboard-safe dialogs, blocked storage, failed exports |
-| PDF      | `scripts/verify-pdf.mjs` | Playwright, PDF.js, Chrome | The real PDF: selectable text, every text block exactly once across pages, reordered and custom sections, Unicode, page count, links and print dialog cleanup                                                       |
+| PDF      | `scripts/verify-pdf.mjs` | Playwright, PDF.js, Chrome | The exported PDF: selectable text, every text block exactly once across pages, reordered and custom sections, Unicode, page count, links and print dialog cleanup                                                   |
 
 ```sh
 npm run typecheck
