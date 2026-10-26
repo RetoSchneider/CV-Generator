@@ -125,16 +125,16 @@ const STRINGS: Record<Locale, SampleStrings> = {
     language_native_label: "Native Language",
     language_english_label: "English",
     highlight_current_1:
-      "Owned the migration of a flaky Selenium suite to Playwright, cutting CI runtime from 38 → 9 minutes and false-failure rate by ~80%.",
+      "Owned the migration of a flaky Selenium suite to Playwright, cutting CI runtime from 38 to 9 minutes and false-failure rate by ~80%.",
     highlight_current_2:
       "Designed a reusable test-data factory used across 4 product teams, removing ~600 lines of duplicated setup per repo.",
     highlight_current_3:
-      "Pair-built features with backend devs from ticket to release; shipped roughly 1 feature/week with zero rollback in the last 9 months.",
+      "Pair-built features with backend devs from ticket to release; shipped roughly 1 feature/week with zero rollbacks in the last 9 months.",
     highlight_current_4:
       "Run the team's onboarding for new hires — wrote the internal 'first 30 days' guide that 6 engineers now use.",
     highlight_first_1: "First role out of bootcamp — moved from ticket-fixer to feature-owner inside 6 months.",
     highlight_first_2: "Built a customer-facing reporting dashboard (React + Recharts) used by ~200 daily users.",
-    highlight_first_3: "Introduced unit-test discipline to a legacy Express service; coverage grew from 12% → 64%.",
+    highlight_first_3: "Introduced unit-test discipline to a legacy Express service; coverage grew from 12% to 64%.",
     highlight_bootcamp_1: "Intensive 6-month program: HTML/CSS/JS → React → Node/Express → SQL/NoSQL → deployment.",
     highlight_bootcamp_2: "Capstone: a full-stack inventory app with auth, role-based access, and a CI pipeline.",
     highlight_bootcamp_3: "Graduated top 10% of cohort; mentored two later cohorts on Git/PR hygiene.",
@@ -155,7 +155,7 @@ const STRINGS: Record<Locale, SampleStrings> = {
     email: "dein.name@domain.dev",
     handle: "deinname",
     summary:
-      "Quereinsteiger mit 4+ Jahren Produktionserfahrung nach einem Full-Stack-Bootcamp — ohne Studium, dafür mit Portfolio. Ich liefere Features pragmatisch von Anfang bis Ende und behandle Qualität als First-Class-Thema; ich schreibe die Tests, die ich mir früher gewünscht hätte. Bin im ganzen Stack zu Hause, am stärksten im Bereich Testautomatisierung und Reliability. Die Jahre vor der IT haben mich gelehrt, mit Menschen zu sprechen, nicht nur mit Compilern.",
+      "Quereinsteiger mit 4+ Jahren Produktionserfahrung nach einem Full-Stack-Bootcamp — ohne Studium, dafür mit Portfolio. Ich liefere Features pragmatisch von Anfang bis Ende und behandle Qualität als First-Class-Thema; ich schreibe die Tests, die ich mir früher gewünscht hätte. Ich bin im ganzen Stack zu Hause, am stärksten im Bereich Testautomatisierung und Reliability. Die Jahre vor der IT haben mich gelehrt, mit Menschen zu sprechen, nicht nur mit Compilern.",
     currentCompany: "Aktueller Arbeitgeber",
     firstEmployer: "Erster IT-Arbeitgeber",
     bootcampProvider: "Bootcamp-Anbieter",
@@ -200,19 +200,19 @@ const STRINGS: Record<Locale, SampleStrings> = {
     language_native_label: "Deutsch",
     language_english_label: "Englisch",
     highlight_current_1:
-      "Migration einer instabilen Selenium-Suite zu Playwright verantwortet — CI-Laufzeit von 38 → 9 Min., False-Failure-Rate ~80 % gesenkt.",
+      "Migration einer instabilen Selenium-Suite zu Playwright verantwortet — CI-Laufzeit von 38 auf 9 Min., False-Failure-Rate ~80 % gesenkt.",
     highlight_current_2:
       "Wiederverwendbare Test-Data-Factory entworfen, eingesetzt in 4 Produktteams; ~600 Zeilen Duplikat-Setup pro Repo entfernt.",
     highlight_current_3:
-      "Features im Pair-Programming mit Backend-Devs vom Ticket bis Release ausgeliefert; ca. 1 Feature/Woche, in den letzten 9 Monaten kein Rollback.",
+      "Features im Pair-Programming mit Backend-Devs vom Ticket bis zum Release ausgeliefert; ca. 1 Feature/Woche, in den letzten 9 Monaten kein Rollback.",
     highlight_current_4:
       "Onboarding für neue Mitarbeitende verantwortet — internes „erste 30 Tage“-Handbuch verfasst, das heute 6 Engineers nutzen.",
     highlight_first_1: "Erste Stelle nach dem Bootcamp — innerhalb von 6 Monaten vom Ticket-Fixer zum Feature-Owner gewachsen.",
     highlight_first_2: "Kunden-Reporting-Dashboard gebaut (React + Recharts), ~200 tägliche Nutzer:innen.",
-    highlight_first_3: "Unit-Test-Disziplin in einem Legacy-Express-Service eingeführt; Coverage von 12 % → 64 % gehoben.",
+    highlight_first_3: "Unit-Test-Disziplin in einem Legacy-Express-Service eingeführt; Coverage von 12 % auf 64 % gehoben.",
     highlight_bootcamp_1: "Intensives 6-monatiges Programm: HTML/CSS/JS → React → Node/Express → SQL/NoSQL → Deployment.",
     highlight_bootcamp_2: "Capstone: Full-Stack-Inventar-App mit Auth, Rollen-Rechten und CI-Pipeline.",
-    highlight_bootcamp_3: "Top 10 % der Kohorte; zwei nachfolgende Kohorten in Git/PR-Hygiene gementored.",
+    highlight_bootcamp_3: "Top 10 % der Kohorte; zwei nachfolgende Kohorten in Git/PR-Hygiene betreut.",
     project_cv_tagline: "Local-first CV-Generator mit PDF- und DOCX-Export.",
     project_cv_highlight_1: "Live-Vorschau ohne Backend — läuft komplett im Browser.",
     project_cv_highlight_2: "PDF-Export mit markierbarem Text plus textbasierter Word-Export für Bewerbermanagementsysteme.",
@@ -281,7 +281,7 @@ const STRINGS: Record<Locale, SampleStrings> = {
     highlight_current_3:
       "Features livrées en pair avec le backend, du ticket à la mise en prod ; ~1 feature/semaine, zéro rollback sur les 9 derniers mois.",
     highlight_current_4:
-      "Onboarding des nouveaux pilotés ; rédaction du guide interne « 30 premiers jours », utilisé par 6 ingénieurs aujourd'hui.",
+      "Onboarding des nouveaux piloté ; rédaction du guide interne « 30 premiers jours », utilisé par 6 ingénieurs aujourd'hui.",
     highlight_first_1: "Premier poste post-bootcamp — passé de fix-de-tickets à propriétaire de features en 6 mois.",
     highlight_first_2: "Dashboard de reporting client (React + Recharts) utilisé par ~200 personnes par jour.",
     highlight_first_3: "Discipline de tests unitaires installée sur un service Express legacy ; couverture 12 % → 64 %.",
@@ -356,7 +356,7 @@ const STRINGS: Record<Locale, SampleStrings> = {
     highlight_current_3:
       "Feature realizzate in pair con il backend, dal ticket al rilascio; ~1 feature/settimana, zero rollback negli ultimi 9 mesi.",
     highlight_current_4:
-      "Onboarding dei nuovi inserimenti curato — redatta la guida interna „primi 30 giorni“, ora usata da 6 ingegneri.",
+      "Onboarding dei nuovi inserimenti curato — redatta la guida interna «primi 30 giorni», ora usata da 6 ingegneri.",
     highlight_first_1: "Primo ruolo post-bootcamp — da fix di ticket a feature owner in 6 mesi.",
     highlight_first_2: "Dashboard di reporting per i clienti (React + Recharts) usata da ~200 utenti al giorno.",
     highlight_first_3: "Disciplina di unit test introdotta in un servizio Express legacy; copertura 12 % → 64 %.",
@@ -368,7 +368,7 @@ const STRINGS: Record<Locale, SampleStrings> = {
     project_cv_highlight_2: "Export PDF con testo selezionabile ed export Word testuale per i sistemi di selezione del personale.",
     project_raid_tagline: "Pianificatore leggero per i raid di gilda con bilanciamento dei ruoli.",
     project_raid_highlight_1: "Progetto personale nato come bot Discord, oggi ~40 utenti attivi a settimana nella mia gilda.",
-    project_raid_highlight_2: "Mi ha costretto a imparare davvero auth, rate limiting e i casi limite „la gente ne abuserà“.",
+    project_raid_highlight_2: "Mi ha costretto a imparare davvero auth, rate limiting e i casi limite «la gente ne abuserà».",
   },
 };
 

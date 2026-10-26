@@ -30,7 +30,7 @@ const en: Dict = {
   "bar.tooltip.sample": "Replace current data with the sample template",
   "bar.tooltip.clear": "Wipe everything",
   "bar.tooltip.word": "Download Word document (.docx) — ATS-friendly",
-  "bar.tooltip.save": "Save all data to a file you can re-open later",
+  "bar.tooltip.save": "Save all data to a file you can reopen later",
   "bar.tooltip.open": "Load a previously saved data file",
   "confirm.import.title": "Load this file and replace your CV?",
   "confirm.import.message": "Your current edits will be overwritten by the file's contents.",
@@ -54,7 +54,7 @@ const en: Dict = {
   "template.modern.label": "Modern Pro",
   "template.modern.sub": "Two-column · sidebar · accent bar",
   "template.console.label": "Dev Console",
-  "template.console.sub": "IDE-flavored · subtle nerdy · clean print",
+  "template.console.sub": "IDE-flavored · subtly nerdy · clean print",
   "template.editorial.label": "Editorial",
   "template.editorial.sub": "Single column · serif-feel · classic",
 
@@ -165,7 +165,7 @@ const en: Dict = {
   "hint.pane.body": "Your data stays in this browser (localStorage). Export as {{pdf}} with selectable text or as an editable {{word}} document.",
   "hint.footer.title": "tips",
   "hint.footer.body": "Keep it to 1–2 pages and start each bullet with the result. The arrows move a section within its column; add your own sections at the end of each column. Mark gaps as a professional break instead of hiding them, and use Save to keep a backup file.",
-  "hint.footer.note": "PDF: choose Save as PDF, A4, 100% scale, and no headers or footers in the print dialog.",
+  "hint.footer.note": "PDF: choose “Save as PDF”, A4, 100% scale, and no headers or footers in the print dialog.",
 
   "cv.label": "Curriculum Vitae",
   "cv.profile": "Profile",
@@ -253,13 +253,13 @@ const de: Dict = {
   "import.error.message": "Das sieht nicht nach einer CV-Generator-Datei aus. Wähle eine hier gesicherte .cvdata.json-Datei.",
   "import.error.ok": "OK",
   "preview.preview": "vorschau",
-  "preview.actualSize": "Originalgröße",
+  "preview.actualSize": "Originalgrösse",
   "preview.reset": "Zoom zurücksetzen",
 
   "theme.template": "Vorlage",
   "theme.accent": "Akzent",
   "theme.density": "Dichte",
-  "theme.density.comfortable": "großzügig",
+  "theme.density.comfortable": "grosszügig",
   "theme.density.compact": "kompakt",
   "theme.showPhoto": "Foto / Monogramm auf dem CV anzeigen",
   "theme.language": "Sprache",
@@ -359,14 +359,14 @@ const de: Dict = {
   "photo.shape.circle": "rund",
   "photo.shape.rounded": "abgerundet",
   "photo.shape.square": "eckig",
-  "photo.help": "Bild ablegen oder klicken. Quadratische Ausschnitte wirken am besten — Schulter-aufwärts, ruhiger Hintergrund.",
+  "photo.help": "Bild ablegen oder klicken. Quadratische Ausschnitte wirken am besten — Porträt ab den Schultern aufwärts, ruhiger Hintergrund.",
   "photo.error.notImage": "Keine Bilddatei",
 
   "btn.add.entry": "eintrag",
   "btn.add.group": "gruppe",
   "btn.add.lang": "sprache",
   "btn.add.tag": "tag",
-  "btn.add.bullet": "+ bullet",
+  "btn.add.bullet": "+ stichpunkt",
   "btn.up": "Nach oben",
   "btn.down": "Nach unten",
   "btn.sectionUp": "Bereich nach oben",
@@ -379,7 +379,7 @@ const de: Dict = {
   "hint.pane.body": "Deine Daten bleiben in diesem Browser (localStorage). Exportiere als {{pdf}} mit markierbarem Text oder als bearbeitbares {{word}}-Dokument.",
   "hint.footer.title": "tipps",
   "hint.footer.body": "Halte den CV auf 1–2 Seiten und beginne jeden Punkt mit dem Ergebnis. Mit den Pfeilen verschiebst du einen Bereich innerhalb seiner Spalte; eigene Bereiche fügst du am Ende jeder Spalte hinzu. Markiere Lücken als berufliche Auszeit, statt sie zu verstecken, und lege mit „Sichern“ eine Sicherungsdatei an.",
-  "hint.footer.note": "PDF: Im Druckdialog Als PDF speichern, A4, 100 % Skalierung und keine Kopf- und Fusszeilen wählen.",
+  "hint.footer.note": "PDF: Im Druckdialog „Als PDF speichern“, A4, 100 % Skalierung und keine Kopf- und Fusszeilen wählen.",
 
   "cv.label": "Curriculum Vitae",
   "cv.profile": "Profil",
@@ -396,7 +396,7 @@ const de: Dict = {
   "cv.stackPrefix": "Stack",
   "cv.break": "Auszeit",
   "cv.breakNote": "[ berufliche Auszeit ]",
-  "cv.present": "Heute",
+  "cv.present": "heute",
   "cv.customSection": "Eigener Bereich",
 
   "cv.console.offTheClock": "// nach feierabend",
@@ -439,10 +439,10 @@ const de: Dict = {
 };
 
 const fr: Dict = {
-  "export.error": "Échec de l’export. Réessayez ou sauvegardez un fichier JSON.",
-  "storage.error.read": "Les données enregistrées n’ont pas pu être chargées. Sauvegardez un fichier JSON avant de recharger.",
+  "export.error": "Échec de l'export. Réessayez ou sauvegardez un fichier JSON.",
+  "storage.error.read": "Les données enregistrées n'ont pas pu être chargées. Sauvegardez un fichier JSON avant de recharger.",
   "storage.error.write": "Les modifications sont uniquement en mémoire. Sauvegardez un fichier JSON avant de fermer cette page.",
-  "bar.tooltip.pdf": "Ouvrir la boîte de dialogue d’impression pour enregistrer un PDF avec du texte sélectionnable.",
+  "bar.tooltip.pdf": "Ouvrir la boîte de dialogue d'impression pour enregistrer un PDF avec du texte sélectionnable.",
   "preview.zoomIn": "Agrandir",
   "preview.zoomOut": "Réduire",
   "app.title": "Générateur de CV",
@@ -593,7 +593,7 @@ const fr: Dict = {
   "hint.pane.body": "Vos données restent dans ce navigateur (localStorage). Exportez en {{pdf}} avec du texte sélectionnable ou en document {{word}} modifiable.",
   "hint.footer.title": "conseils",
   "hint.footer.body": "Limitez le CV à 1–2 pages et commencez chaque puce par le résultat. Les flèches déplacent une section dans sa colonne ; ajoutez vos propres sections en bas de chaque colonne. Signalez les trous comme pause professionnelle au lieu de les cacher, et utilisez « Sauver » pour garder une copie de sauvegarde.",
-  "hint.footer.note": "PDF : choisissez Enregistrer au format PDF, A4, une échelle de 100 % et aucun en-tête ni pied de page.",
+  "hint.footer.note": "PDF : choisissez « Enregistrer au format PDF », A4, une échelle de 100 % et aucun en-tête ni pied de page.",
 
   "cv.label": "Curriculum Vitae",
   "cv.profile": "Profil",
@@ -806,8 +806,8 @@ const it: Dict = {
   "hint.pane.title": "Modifica un campo — l'anteprima si aggiorna in tempo reale.",
   "hint.pane.body": "I tuoi dati restano in questo browser (localStorage). Esporta in {{pdf}} con testo selezionabile o in un documento {{word}} modificabile.",
   "hint.footer.title": "consigli",
-  "hint.footer.body": "Resta su 1–2 pagine e inizia ogni punto con il risultato. Le frecce spostano una sezione nella sua colonna; aggiungi sezioni tue in fondo a ogni colonna. Segna i vuoti come pausa professionale invece di nasconderli e usa „Salva“ per tenere un file di backup.",
-  "hint.footer.note": "PDF: scegli Salva come PDF, A4, scala 100% e nessuna intestazione o piè di pagina.",
+  "hint.footer.body": "Resta su 1–2 pagine e inizia ogni punto con il risultato. Le frecce spostano una sezione nella sua colonna; aggiungi sezioni tue in fondo a ogni colonna. Segna i vuoti come pausa professionale invece di nasconderli e usa «Salva» per tenere un file di backup.",
+  "hint.footer.note": "PDF: scegli «Salva come PDF», A4, scala 100% e nessuna intestazione o piè di pagina.",
 
   "cv.label": "Curriculum Vitae",
   "cv.profile": "Profilo",
@@ -843,7 +843,7 @@ const it: Dict = {
   "confirm.action.confirm": "Conferma",
 
   "confirm.clearAll.title": "Cancellare tutti i dati del CV?",
-  "confirm.clearAll.message": "Tutti i campi verranno svuotati. Il modello di esempio è sempre recuperabile dal pulsante „Esempio“.",
+  "confirm.clearAll.message": "Tutti i campi verranno svuotati. Il modello di esempio è sempre recuperabile dal pulsante «Esempio».",
   "confirm.clearAll.action": "Cancella tutto",
 
   "confirm.resetSample.title": "Sostituire il CV con l'esempio?",
